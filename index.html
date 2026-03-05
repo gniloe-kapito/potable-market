@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ArzMarket — Цены Arizona RP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080b14;
+    --glass: rgba(255,255,255,0.04);
+    --glass-border: rgba(255,255,255,0.08);
+    --glass-hover: rgba(255,255,255,0.07);
+    --accent: #4f8ef7;
+    --accent2: #a259f7;
+    --accent3: #f75959;
+    --accent4: #59f7c8;
+    --text: #e8eaf6;
+    --text-dim: rgba(232,234,246,0.45);
+    --text-muted: rgba(232,234,246,0.25);
+    --green: #4ade80;
+    --red: #f87171;
+    --card-radius: 18px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ─── BOKEH BACKGROUND ─── */
+  #bokeh {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .bokeh-light {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0;
+    animation: bokehFloat var(--dur) ease-in-out infinite alternate;
+  }
+
+  @keyframes bokehFloat {
+    0%   { opacity: var(--op-min); transform: translate(0, 0) scale(1); }
+    50%  { opacity: var(--op-max); }
+    100% { opacity: var(--op-min); transform: translate(var(--tx), var(--ty)) scale(var(--sc)); }
+  }
+
+  /* ─── LAYOUT ─── */
+  #app {
+    position: relative;
+    z-index: 1;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+  }
+
+  /* ─── HEADER ─── */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 32px 0 48px;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .logo-icon {
+    width: 44px;
+    height: 44px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    box-shadow: 0 0 24px rgba(79,142,247,0.4);
+  }
+
+  .logo-text {
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+
+  .logo-text span {
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .logo-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  .status-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 100px;
+    padding: 8px 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    backdrop-filter: blur(12px);
+  }
+
+  .status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 8px var(--green);
+    animation: pulse 2s infinite;
+  }
+
+  .status-dot.loading { background: #f7c948; box-shadow: 0 0 8px #f7c948; }
+  .status-dot.error   { background: var(--red); box-shadow: 0 0 8px var(--red); }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.4; }
+  }
+
+  /* ─── CONTROLS ─── */
+  .controls {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 12px;
+    margin-bottom: 32px;
+    align-items: center;
+  }
+
+  @media (max-width: 700px) {
+    .controls { grid-template-columns: 1fr 1fr; }
+    .controls .search-wrap { grid-column: 1 / -1; }
+  }
+
+  .search-wrap {
+    position: relative;
+  }
+
+  .search-wrap svg {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    pointer-events: none;
+  }
+
+  #search {
+    width: 100%;
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 14px 16px 14px 46px;
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    outline: none;
+    backdrop-filter: blur(12px);
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  #search::placeholder { color: var(--text-muted); }
+
+  #search:focus {
+    border-color: rgba(79,142,247,0.5);
+    box-shadow: 0 0 0 3px rgba(79,142,247,0.1);
+  }
+
+  .ctrl-btn {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 12px 20px;
+    color: var(--text-dim);
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    backdrop-filter: blur(12px);
+    transition: all 0.2s;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .ctrl-btn:hover {
+    background: var(--glass-hover);
+    color: var(--text);
+    border-color: rgba(255,255,255,0.15);
+  }
+
+  .ctrl-btn.active {
+    background: rgba(79,142,247,0.15);
+    border-color: rgba(79,142,247,0.4);
+    color: var(--accent);
+  }
+
+  /* ─── SERVER SELECTOR ─── */
+  .server-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 28px;
+    align-items: center;
+    overflow-x: auto;
+    padding-bottom: 6px;
+    scrollbar-width: thin;
+  }
+
+  #server-chips {
+    display: flex;
+    gap: 6px;
+    flex-wrap: nowrap;
+  }
+
+  .server-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-right: 4px;
+  }
+
+  .server-chip {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 100px;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--text-dim);
+    backdrop-filter: blur(8px);
+  }
+
+  .server-chip:hover {
+    color: var(--text);
+    border-color: rgba(255,255,255,0.2);
+  }
+
+  .server-chip.active {
+    background: linear-gradient(135deg, rgba(79,142,247,0.25), rgba(162,89,247,0.25));
+    border-color: rgba(79,142,247,0.5);
+    color: var(--text);
+    box-shadow: 0 0 16px rgba(79,142,247,0.15);
+  }
+
+  /* ─── STATS BAR ─── */
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+
+  .stat-card {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--card-radius);
+    padding: 18px 20px;
+    backdrop-filter: blur(16px);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .stat-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+  }
+
+  .stat-value {
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -1px;
+  }
+
+  .stat-value.accent  { color: var(--accent); }
+  .stat-value.accent2 { color: var(--accent2); }
+  .stat-value.accent4 { color: var(--accent4); }
+
+  /* ─── GRID ─── */
+  #grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 14px;
+  }
+
+  /* ─── ITEM CARD ─── */
+  .item-card {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--card-radius);
+    padding: 20px;
+    backdrop-filter: blur(20px);
+    cursor: pointer;
+    transition: transform 0.22s, border-color 0.22s, box-shadow 0.22s, background 0.22s;
+    position: relative;
+    overflow: hidden;
+    animation: cardIn 0.4s ease both;
+  }
+
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .item-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(79,142,247,0.06), transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .item-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(79,142,247,0.3);
+    box-shadow: 0 8px 40px rgba(79,142,247,0.1), 0 0 0 1px rgba(79,142,247,0.1);
+    background: var(--glass-hover);
+  }
+
+  .item-card:hover::before { opacity: 1; }
+
+  .item-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .item-name {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.2;
+    word-break: break-word;
+  }
+
+  .item-date {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    white-space: nowrap;
+    margin-top: 3px;
+  }
+
+  .item-server-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    background: rgba(79,142,247,0.12);
+    border: 1px solid rgba(79,142,247,0.2);
+    border-radius: 6px;
+    padding: 3px 7px;
+    color: var(--accent);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .item-prices {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .price-box {
+    background: rgba(0,0,0,0.2);
+    border-radius: 10px;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .price-box-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .price-box.buy  .price-box-label { color: var(--green); }
+  .price-box.sell .price-box-label { color: var(--red); }
+
+  .price-box-value {
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    line-height: 1;
+  }
+
+  .price-box.buy  .price-box-value { color: var(--green); }
+  .price-box.sell .price-box-value { color: var(--red); }
+
+  .price-box-vol {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  .price-single {
+    background: rgba(0,0,0,0.2);
+    border-radius: 10px;
+    padding: 10px 12px;
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .price-single .price-box-label { color: var(--accent); font-family: 'JetBrains Mono', monospace; font-size: 9px; text-transform: uppercase; letter-spacing: 1px; }
+  .price-single .price-box-value { font-size: 20px; font-weight: 800; color: var(--accent); }
+
+  /* ─── TREND INDICATOR ─── */
+  .trend {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    padding: 2px 6px;
+    border-radius: 6px;
+    margin-top: 4px;
+  }
+
+  .trend.up   { color: var(--green); background: rgba(74,222,128,0.1); }
+  .trend.down { color: var(--red);   background: rgba(248,113,113,0.1); }
+  .trend.flat { color: var(--text-muted); background: rgba(255,255,255,0.04); }
+
+  /* ─── MODAL ─── */
+  #modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(8,11,20,0.8);
+    backdrop-filter: blur(12px);
+    z-index: 100;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  #modal-overlay.open { display: flex; }
+
+  #modal {
+    background: rgba(16,20,36,0.95);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 24px;
+    padding: 32px;
+    max-width: 560px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+    animation: modalIn 0.25s ease;
+  }
+
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.95) translateY(10px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    color: var(--text-dim);
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+
+  .modal-close:hover { color: var(--text); background: var(--glass-hover); }
+
+  .modal-title {
+    font-size: 24px;
+    font-weight: 800;
+    margin-bottom: 6px;
+  }
+
+  .modal-subtitle {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+  }
+
+  .modal-section {
+    margin-bottom: 20px;
+  }
+
+  .modal-section-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+  }
+
+  .history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .history-row {
+    display: grid;
+    grid-template-columns: 100px 1fr 80px;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+  }
+
+  .history-row .h-date { color: var(--text-muted); }
+  .history-row .h-price { font-weight: 500; }
+  .history-row .h-vol { color: var(--text-dim); text-align: right; font-size: 10px; }
+
+  /* ─── EMPTY STATE ─── */
+  .empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--text-muted);
+  }
+
+  .empty-icon { font-size: 48px; margin-bottom: 16px; }
+  .empty-text { font-size: 18px; font-weight: 600; color: var(--text-dim); }
+  .empty-sub  { font-size: 13px; margin-top: 6px; }
+
+  /* ─── LOADING SKELETON ─── */
+  .skeleton {
+    background: linear-gradient(90deg, var(--glass) 25%, rgba(255,255,255,0.07) 50%, var(--glass) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.4s infinite;
+    border-radius: 8px;
+  }
+
+  @keyframes shimmer {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  .skel-card {
+    height: 140px;
+    border-radius: var(--card-radius);
+    border: 1px solid var(--glass-border);
+  }
+
+  /* ─── SCROLLBAR ─── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+  /* ─── FOOTER ─── */
+  footer {
+    margin-top: 60px;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    padding: 24px 0;
+    border-top: 1px solid var(--glass-border);
+  }
+
+  footer a { color: var(--accent); text-decoration: none; }
+
+  /* ─── SORT TABS ─── */
+  .sort-bar {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .sort-tab {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 100px;
+    padding: 5px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--text-dim);
+    transition: all 0.18s;
+  }
+
+  .sort-tab:hover { color: var(--text); border-color: rgba(255,255,255,0.15); }
+  .sort-tab.active {
+    background: rgba(162,89,247,0.15);
+    border-color: rgba(162,89,247,0.4);
+    color: var(--accent2);
+  }
+</style>
+</head>
+<body>
+
+<!-- BOKEH LIGHTS -->
+<div id="bokeh"></div>
+
+<div id="app">
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo">
+      <div class="logo-icon">◈</div>
+      <div>
+        <div class="logo-text">Arz<span>Market</span></div>
+        <div class="logo-sub">portable market BY Nikitos_Ciganin</div>
+      </div>
+    </div>
+    <div class="status-pill">
+      <div class="status-dot loading" id="status-dot"></div>
+      <span id="status-text">Загрузка...</span>
+    </div>
+  </header>
+
+  <!-- STATS -->
+  <div class="stats-bar">
+    <div class="stat-card">
+      <div class="stat-label">Товаров</div>
+      <div class="stat-value accent" id="stat-total">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Источник данных</div>
+      <div class="stat-value accent2" id="stat-source" style="font-size:14px;font-weight:700;margin-top:4px;">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Сервер</div>
+      <div class="stat-value accent4" id="stat-server">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Обновлено</div>
+      <div class="stat-value" id="stat-updated" style="font-size:16px;font-weight:700;margin-top:4px;color:var(--text-dim)">—</div>
+    </div>
+  </div>
+
+  <!-- SERVER BAR -->
+  <div class="server-bar">
+    <span class="server-label">Сервер</span>
+    <div id="server-chips"></div>
+  </div>
+
+  <!-- CONTROLS -->
+  <div class="controls">
+    <div class="search-wrap">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+      </svg>
+      <input type="text" id="search" placeholder="Поиск товара...">
+    </div>
+    <button class="ctrl-btn" id="btn-mode" onclick="toggleMode()">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path d="M3 6h18M3 12h18M3 18h18"/>
+      </svg>
+      Вид
+    </button>
+    <button class="ctrl-btn" onclick="loadData()">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/>
+      </svg>
+      Обновить
+    </button>
+  </div>
+
+  <!-- SORT -->
+  <div class="sort-bar">
+    <span class="server-label" style="align-self:center">Сортировка</span>
+    <button class="sort-tab active" data-sort="name" onclick="setSort('name', this)">По названию</button>
+    <button class="sort-tab" data-sort="price-asc" onclick="setSort('price-asc', this)">Цена ↑</button>
+    <button class="sort-tab" data-sort="price-desc" onclick="setSort('price-desc', this)">Цена ↓</button>
+    <button class="sort-tab" data-sort="volume" onclick="setSort('volume', this)">По объёму</button>
+    <button class="sort-tab" data-sort="date" onclick="setSort('date', this)">Новые сделки</button>
+  </div>
+
+  <!-- GRID -->
+  <div id="grid"></div>
+
+  <footer>
+    ArzMarket Price Tracker &nbsp;·&nbsp;
+    Данные: <a href="https://api.arz.market" target="_blank">api.arz.market</a> &amp;
+    <a href="https://github.com/FREYM1337/forumnick" target="_blank">GitHub FREYM1337</a>
+    &nbsp;·&nbsp; Не является официальным сервисом Arizona RP
+  </footer>
+</div>
+
+<!-- MODAL -->
+<div id="modal-overlay" onclick="closeModal(event)">
+  <div id="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<script>
+// ─── BOKEH GENERATOR ───
+(function() {
+  const bokeh = document.getElementById('bokeh');
+  const colors = [
+    'rgba(79,142,247,', 'rgba(162,89,247,', 'rgba(247,89,89,',
+    'rgba(89,247,200,', 'rgba(247,200,89,', 'rgba(89,147,247,'
+  ];
+  for (let i = 0; i < 28; i++) {
+    const el = document.createElement('div');
+    el.className = 'bokeh-light';
+    const size = 120 + Math.random() * 300;
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    const dur = 6 + Math.random() * 12;
+    const tx = (Math.random() - 0.5) * 120;
+    const ty = (Math.random() - 0.5) * 120;
+    const sc = 0.8 + Math.random() * 0.5;
+    const opMin = 0.04 + Math.random() * 0.06;
+    const opMax = 0.1 + Math.random() * 0.18;
+    el.style.cssText = `
+      width: ${size}px; height: ${size}px;
+      left: ${Math.random() * 110 - 5}%;
+      top: ${Math.random() * 110 - 5}%;
+      background: radial-gradient(circle, ${color}0.9) 0%, ${color}0) 70%);
+      --dur: ${dur}s;
+      --tx: ${tx}px; --ty: ${ty}px; --sc: ${sc};
+      --op-min: ${opMin}; --op-max: ${opMax};
+      animation-delay: ${-Math.random() * dur}s;
+    `;
+    bokeh.appendChild(el);
+  }
+})();
+
+// ─── STATE ───
+const SERVERS = [
+  { id: 'phoenix',    label: '[1] Phoenix' },
+  { id: 'tucson',     label: '[2] Tucson' },
+  { id: 'scottdale',  label: '[3] Scottdale' },
+  { id: 'chandler',   label: '[4] Chandler' },
+  { id: 'brainburg',  label: '[5] Brainburg' },
+  { id: 'saintrose',  label: '[6] Saint Rose' },
+  { id: 'mesa',       label: '[7] Mesa' },
+  { id: 'redrock',    label: '[8] Red Rock' },
+  { id: 'yuma',       label: '[9] Yuma' },
+  { id: 'surprise',   label: '[10] Surprise' },
+  { id: 'prescott',   label: '[11] Prescott' },
+  { id: 'glendale',   label: '[12] Glendale' },
+  { id: 'kingman',    label: '[13] Kingman' },
+  { id: 'winslow',    label: '[14] Winslow' },
+  { id: 'payson',     label: '[15] Payson' },
+  { id: 'gilbert',    label: '[16] Gilbert' },
+  { id: 'show-low',   label: '[17] Show-Low' },
+  { id: 'casagrande', label: '[18] Casa Grande' },
+  { id: 'page',       label: '[19] Page' },
+  { id: 'suncity',    label: '[20] Sun City' },
+  { id: 'queencreek', label: '[21] Queen Creek' },
+  { id: 'sedona',     label: '[22] Sedona' },
+  { id: 'holiday',    label: '[23] Holiday' },
+  { id: 'wednesday',  label: '[24] Wednesday' },
+  { id: 'yava',       label: '[25] Yava' },
+  { id: 'faraway',    label: '[26] Faraway' },
+  { id: 'bumblebee',  label: '[27] Bumble Bee' },
+  { id: 'christmas',  label: '[28] Christmas' },
+  { id: 'mirage',     label: '[29] Mirage' },
+  { id: 'love',       label: '[30] Love' },
+  { id: 'drake',      label: '[31] Drake' },
+  { id: 'space',      label: '[32] Space' },
+];
+
+let state = {
+  allItems: [],       // [{name, buyPrice, sellPrice, buyVol, sellVol, buyDate, sellDate, buyHistory, server}]
+  filtered: [],
+  currentServer: 'phoenix',
+  sort: 'name',
+  search: '',
+  gridMode: 'grid',  // grid | list
+  dataSource: '—',
+};
+
+// ─── INIT ───
+document.addEventListener('DOMContentLoaded', () => {
+  buildServerChips();
+  loadData();
+
+  document.getElementById('search').addEventListener('input', e => {
+    state.search = e.target.value.toLowerCase();
+    render();
+  });
+});
+
+// ─── SERVER CHIPS ───
+function buildServerChips() {
+  const wrap = document.getElementById('server-chips');
+  wrap.innerHTML = '';
+  SERVERS.forEach(srv => {
+    const chip = document.createElement('button');
+    chip.className = 'server-chip' + (srv.id === state.currentServer ? ' active' : '');
+    chip.textContent = srv.label;
+    chip.onclick = () => {
+      state.currentServer = srv.id;
+      document.querySelectorAll('.server-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      document.getElementById('stat-server').textContent = srv.label;
+      loadData();
+    };
+    wrap.appendChild(chip);
+  });
+}
+
+// ─── LOAD DATA ───
+async function loadData() {
+  setStatus('loading', 'Загрузка...');
+  showSkeletons();
+
+  const srv = state.currentServer;
+  const ghBuyUrl  = `https://raw.githubusercontent.com/FREYM1337/forumnick/main/avg_price/info_users_buy_${srv}.json`;
+  const ghSellUrl = `https://raw.githubusercontent.com/FREYM1337/forumnick/main/avg_price/info_users_sell_${srv}.json`;
+  const apiUrl    = `https://api.arz.market/api/getSelectedMarketplace`;
+
+  // Try API first, fallback to GitHub
+  let buyData = null, sellData = null, usedSource = '';
+
+  try {
+    // Try live API
+    const res = await fetchWithTimeout(apiUrl + `?server=${srv}`, 5000);
+    if (res.ok) {
+      const json = await res.json();
+      // Try to parse API format
+      const parsed = parseApiResponse(json, srv);
+      if (parsed && parsed.length > 0) {
+        state.allItems = parsed;
+        usedSource = 'api.arz.market';
+        setStatus('ok', `api.arz.market · ${srv}`);
+        document.getElementById('stat-source').textContent = 'api.arz.market';
+        updateStats(parsed, srv);
+        render();
+        return;
+      }
+    }
+  } catch(e) { /* fallback */ }
+
+  // Fallback: GitHub raw
+  try {
+    const [buyRes, sellRes] = await Promise.all([
+      fetchWithTimeout(ghBuyUrl, 8000),
+      fetchWithTimeout(ghSellUrl, 8000),
+    ]);
+
+    if (buyRes.ok)  buyData  = await buyRes.json();
+    if (sellRes.ok) sellData = await sellRes.json();
+
+    if (buyData || sellData) {
+      const parsed = parseGithubData(buyData, sellData, srv);
+      state.allItems = parsed;
+      usedSource = 'GitHub (avg_price)';
+      setStatus('ok', `GitHub · ${srv}`);
+      document.getElementById('stat-source').textContent = 'GitHub avg_price';
+      updateStats(parsed, srv);
+      render();
+      return;
+    }
+  } catch(e) { /* error */ }
+
+  setStatus('error', 'Ошибка загрузки');
+  document.getElementById('grid').innerHTML = `
+    <div class="empty">
+      <div class="empty-icon">⚠️</div>
+      <div class="empty-text">Не удалось загрузить данные</div>
+      <div class="empty-sub">Проверьте подключение к интернету</div>
+    </div>`;
+}
+
+// ─── FETCH WITH TIMEOUT ───
+function fetchWithTimeout(url, ms) {
+  return Promise.race([
+    fetch(url),
+    new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), ms))
+  ]);
+}
+
+// ─── PARSE API RESPONSE ───
+function parseApiResponse(json, srv) {
+  // api.arz.market format — adapt if needed
+  if (Array.isArray(json)) {
+    return json.map(item => ({
+      name:       item.name || item.item || '—',
+      buyPrice:   item.buyPrice  || item.buy_price  || item.price || 0,
+      sellPrice:  item.sellPrice || item.sell_price || item.price || 0,
+      buyVol:     item.buyCount  || item.buy_count  || 0,
+      sellVol:    item.sellCount || item.sell_count || 0,
+      buyDate:    item.date || '—',
+      sellDate:   item.date || '—',
+      buyHistory:  [],
+      sellHistory: [],
+      server: srv,
+    }));
+  }
+  return null;
+}
+
+// ─── PARSE GITHUB DATA ───
+function parseGithubData(buyData, sellData, srv) {
+  const items = {};
+
+  const processData = (data, type) => {
+    if (!data) return;
+    Object.entries(data).forEach(([name, val]) => {
+      if (!val || !val.list || !val.list.length) return;
+      if (!items[name]) items[name] = { name, server: srv };
+
+      // list entries: [date, count, total, count2, avgPrice, avgPrice2]
+      const history = val.list.slice(0, 30);
+      const latest  = val.list[0];
+      const avgPrice = latest[4] || 0;
+      const count    = latest[1] || 0;
+      const date     = latest[0] || '—';
+
+      if (type === 'buy') {
+        items[name].buyPrice   = avgPrice;
+        items[name].buyVol     = count;
+        items[name].buyDate    = date;
+        items[name].buyHistory = history;
+      } else {
+        items[name].sellPrice   = avgPrice;
+        items[name].sellVol     = count;
+        items[name].sellDate    = date;
+        items[name].sellHistory = history;
+      }
+    });
+  };
+
+  processData(buyData,  'buy');
+  processData(sellData, 'sell');
+
+  return Object.values(items).filter(i => i.buyPrice || i.sellPrice);
+}
+
+// ─── UPDATE STATS ───
+function updateStats(items, srv) {
+  document.getElementById('stat-total').textContent = items.length;
+  const label = SERVERS.find(s => s.id === srv)?.label || srv;
+  document.getElementById('stat-server').textContent = label;
+  document.getElementById('stat-updated').textContent = new Date().toLocaleTimeString('ru-RU');
+}
+
+// ─── SORT ───
+function setSort(sort, el) {
+  state.sort = sort;
+  document.querySelectorAll('.sort-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  render();
+}
+
+function sortItems(items) {
+  const arr = [...items];
+  switch (state.sort) {
+    case 'name':       return arr.sort((a,b) => a.name.localeCompare(b.name, 'ru'));
+    case 'price-asc':  return arr.sort((a,b) => (a.buyPrice||a.sellPrice||0) - (b.buyPrice||b.sellPrice||0));
+    case 'price-desc': return arr.sort((a,b) => (b.buyPrice||b.sellPrice||0) - (a.buyPrice||a.sellPrice||0));
+    case 'volume':     return arr.sort((a,b) => (b.buyVol||0) - (a.buyVol||0));
+    case 'date':       return arr.sort((a,b) => (b.buyDate||'').localeCompare(a.buyDate||''));
+  }
+  return arr;
+}
+
+// ─── TOGGLE MODE ───
+function toggleMode() {
+  state.gridMode = state.gridMode === 'grid' ? 'list' : 'grid';
+  const grid = document.getElementById('grid');
+  if (state.gridMode === 'list') {
+    grid.style.gridTemplateColumns = '1fr';
+    document.getElementById('btn-mode').classList.add('active');
+  } else {
+    grid.style.gridTemplateColumns = '';
+    document.getElementById('btn-mode').classList.remove('active');
+  }
+}
+
+// ─── RENDER ───
+function render() {
+  const query = state.search;
+  let filtered = state.allItems.filter(item =>
+    !query || item.name.toLowerCase().includes(query)
+  );
+  filtered = sortItems(filtered);
+  state.filtered = filtered;
+
+  const grid = document.getElementById('grid');
+
+  if (!filtered.length) {
+    grid.innerHTML = `
+      <div class="empty">
+        <div class="empty-icon">🔍</div>
+        <div class="empty-text">Ничего не найдено</div>
+        <div class="empty-sub">Попробуйте другой запрос</div>
+      </div>`;
+    return;
+  }
+
+  grid.innerHTML = '';
+  filtered.forEach((item, idx) => {
+    const card = createCard(item, idx);
+    grid.appendChild(card);
+  });
+}
+
+// ─── CREATE CARD ───
+function createCard(item, idx) {
+  const div = document.createElement('div');
+  div.className = 'item-card';
+  div.style.animationDelay = Math.min(idx * 0.03, 0.5) + 's';
+
+  const hasBuy  = item.buyPrice  > 0;
+  const hasSell = item.sellPrice > 0;
+
+  const trend = getTrend(item.buyHistory || item.sellHistory || []);
+  const trendHTML = trend ? `<span class="trend ${trend.dir}">${trend.dir === 'up' ? '▲' : trend.dir === 'down' ? '▼' : '—'} ${trend.pct}%</span>` : '';
+
+  let pricesHTML = '';
+  if (hasBuy && hasSell) {
+    pricesHTML = `
+      <div class="item-prices">
+        <div class="price-box buy">
+          <div class="price-box-label">Покупка</div>
+          <div class="price-box-value">${fmt(item.buyPrice)}</div>
+          <div class="price-box-vol">× ${fmtVol(item.buyVol)}</div>
+        </div>
+        <div class="price-box sell">
+          <div class="price-box-label">Продажа</div>
+          <div class="price-box-value">${fmt(item.sellPrice)}</div>
+          <div class="price-box-vol">× ${fmtVol(item.sellVol)}</div>
+        </div>
+      </div>`;
+  } else {
+    const price = item.buyPrice || item.sellPrice;
+    const vol   = item.buyVol   || item.sellVol;
+    const label = hasBuy ? 'Покупка' : 'Продажа';
+    pricesHTML = `
+      <div class="item-prices">
+        <div class="price-single">
+          <div>
+            <div class="price-box-label">${label}</div>
+            <div class="price-box-value">${fmt(price)}</div>
+          </div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted)">× ${fmtVol(vol)}</div>
+        </div>
+      </div>`;
+  }
+
+  div.innerHTML = `
+    <div class="item-card-header">
+      <div>
+        <div class="item-name">${esc(item.name)}</div>
+        <div class="item-date">${item.buyDate || item.sellDate || '—'}</div>
+        ${trendHTML}
+      </div>
+      <div class="item-server-badge">${item.server || ''}</div>
+    </div>
+    ${pricesHTML}
+  `;
+
+  div.onclick = () => openModal(item);
+  return div;
+}
+
+// ─── TREND ───
+function getTrend(history) {
+  if (!history || history.length < 2) return null;
+  const latest = history[0][4] || 0;
+  const prev   = history[1][4] || 0;
+  if (!prev) return null;
+  const pct = (((latest - prev) / prev) * 100).toFixed(1);
+  const dir = pct > 0.5 ? 'up' : pct < -0.5 ? 'down' : 'flat';
+  return { pct: Math.abs(pct), dir };
+}
+
+// ─── MODAL ───
+function openModal(item) {
+  const history = (item.buyHistory || []).slice(0, 14);
+  const histHTML = history.length ? history.map(h => `
+    <div class="history-row">
+      <span class="h-date">${h[0]}</span>
+      <span class="h-price" style="color:var(--green)">${fmt(h[4])}</span>
+      <span class="h-vol">${fmtVol(h[1])} шт</span>
+    </div>`).join('') : '<div style="color:var(--text-muted);font-size:13px">Нет данных</div>';
+
+  const sellHistory = (item.sellHistory || []).slice(0, 14);
+  const sellHistHTML = sellHistory.length ? sellHistory.map(h => `
+    <div class="history-row">
+      <span class="h-date">${h[0]}</span>
+      <span class="h-price" style="color:var(--red)">${fmt(h[4])}</span>
+      <span class="h-vol">${fmtVol(h[1])} шт</span>
+    </div>`).join('') : '';
+
+  document.getElementById('modal-content').innerHTML = `
+    <div class="modal-title">${esc(item.name)}</div>
+    <div class="modal-subtitle">Сервер: ${item.server || '—'} · Последнее обновление: ${item.buyDate || item.sellDate || '—'}</div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px">
+      ${item.buyPrice ? `
+      <div class="price-box buy" style="padding:14px">
+        <div class="price-box-label">Покупка</div>
+        <div class="price-box-value" style="font-size:24px">${fmt(item.buyPrice)}</div>
+        <div class="price-box-vol">Объём: ${fmtVol(item.buyVol)} шт</div>
+      </div>` : ''}
+      ${item.sellPrice ? `
+      <div class="price-box sell" style="padding:14px">
+        <div class="price-box-label">Продажа</div>
+        <div class="price-box-value" style="font-size:24px">${fmt(item.sellPrice)}</div>
+        <div class="price-box-vol">Объём: ${fmtVol(item.sellVol)} шт</div>
+      </div>` : ''}
+    </div>
+
+    ${history.length ? `
+    <div class="modal-section">
+      <div class="modal-section-title">История цен покупки</div>
+      <div class="history-list">${histHTML}</div>
+    </div>` : ''}
+
+    ${sellHistHTML ? `
+    <div class="modal-section">
+      <div class="modal-section-title">История цен продажи</div>
+      <div class="history-list">${sellHistHTML}</div>
+    </div>` : ''}
+  `;
+
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function closeModal(e) {
+  if (!e || e.target === document.getElementById('modal-overlay') || e.currentTarget?.className === 'modal-close') {
+    document.getElementById('modal-overlay').classList.remove('open');
+  }
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal({ target: document.getElementById('modal-overlay') });
+});
+
+// ─── HELPERS ───
+function fmt(n) {
+  if (!n) return '—';
+  if (n >= 1000000) return (n/1000000).toFixed(1) + 'M';
+  if (n >= 1000)    return (n/1000).toFixed(n >= 10000 ? 0 : 1) + 'K';
+  return n.toLocaleString('ru-RU');
+}
+
+function fmtVol(n) {
+  if (!n) return '0';
+  if (n >= 1000000) return (n/1000000).toFixed(1) + 'M';
+  if (n >= 1000)    return (n/1000).toFixed(0) + 'K';
+  return n.toLocaleString('ru-RU');
+}
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function setStatus(type, text) {
+  const dot  = document.getElementById('status-dot');
+  const span = document.getElementById('status-text');
+  dot.className  = 'status-dot ' + (type === 'ok' ? '' : type);
+  span.textContent = text;
+}
+
+function showSkeletons() {
+  const grid = document.getElementById('grid');
+  grid.style.gridTemplateColumns = '';
+  grid.innerHTML = Array(12).fill(0).map(() =>
+    `<div class="skeleton skel-card"></div>`
+  ).join('');
+}
+</script>
+</body>
+</html>
