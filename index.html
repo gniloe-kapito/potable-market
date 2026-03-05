@@ -58,9 +58,14 @@ header{display:flex;align-items:center;justify-content:space-between;padding:24p
 .icon-btn.active{background:rgba(79,142,247,.15);border-color:rgba(79,142,247,.4);color:var(--accent)}
 
 /* SERVER BAR */
-.server-bar{display:flex;align-items:center;gap:8px;margin-bottom:16px;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin}
-.server-bar::-webkit-scrollbar{height:3px}
-.server-bar::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px}
+.server-bar{position:relative;display:flex;align-items:center;gap:8px;margin-bottom:16px}
+.srv-current-btn{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:6px 14px;color:var(--text);font-family:'Syne',sans-serif;font-size:12px;font-weight:700;cursor:pointer;backdrop-filter:blur(12px);transition:all .18s}
+.srv-current-btn:hover{background:var(--surface2);border-color:var(--border2)}
+.srv-current-btn.open{background:rgba(79,142,247,.15);border-color:rgba(79,142,247,.4);color:var(--accent)}
+.srv-dropdown{display:none;position:absolute;top:calc(100% + 8px);left:0;z-index:50;background:rgba(10,14,26,.97);border:1px solid var(--border2);border-radius:14px;padding:10px;backdrop-filter:blur(20px);box-shadow:0 16px 50px rgba(0,0,0,.6);width:420px;animation:dropIn .18s ease}
+.srv-dropdown.open{display:block}
+@keyframes dropIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+#server-chips{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
 .srv-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-muted);text-transform:uppercase;letter-spacing:2px;white-space:nowrap;margin-right:2px;flex-shrink:0}
 .srv-chip{background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:5px 12px;font-size:11px;font-weight:600;cursor:pointer;color:var(--text-muted);transition:all .18s;white-space:nowrap;flex-shrink:0}
 .srv-chip:hover{color:var(--text);border-color:var(--border2)}
@@ -86,15 +91,15 @@ header{display:flex;align-items:center;justify-content:space-between;padding:24p
 .lavka-card:hover::before{opacity:1}
 @keyframes cardIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 .lc-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;gap:8px}
-.lc-owner{font-size:14px;font-weight:700}
+.lc-owner{font-size:15px;font-weight:800;font-family:'Syne',sans-serif;letter-spacing:-.2px}
 .lc-uid{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);margin-top:2px}
 .lc-srv-badge{font-family:'JetBrains Mono',monospace;font-size:9px;background:rgba(79,142,247,.12);border:1px solid rgba(79,142,247,.2);border-radius:6px;padding:3px 7px;color:var(--accent);white-space:nowrap;flex-shrink:0}
 .lc-counts{display:grid;grid-template-columns:1fr 1fr;gap:6px}
 .lc-count-box{background:rgba(0,0,0,.2);border-radius:var(--radius-sm);padding:8px 10px}
-.lc-count-label{font-family:'JetBrains Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px}
+.lc-count-label{font-family:'Syne',sans-serif;font-size:9px;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;font-weight:600}
 .lc-count-box.sell .lc-count-label{color:var(--green)}
 .lc-count-box.buy  .lc-count-label{color:var(--red)}
-.lc-count-val{font-size:22px;font-weight:800}
+.lc-count-val{font-size:24px;font-weight:800;font-family:'Syne',sans-serif;letter-spacing:-.5px}
 .lc-count-box.sell .lc-count-val{color:var(--green)}
 .lc-count-box.buy  .lc-count-val{color:var(--red)}
 .lc-items-preview{margin-top:10px;display:flex;flex-wrap:wrap;gap:4px}
@@ -199,7 +204,13 @@ footer a{color:var(--accent);text-decoration:none}
 
   <div class="server-bar">
     <span class="srv-label">Сервер</span>
-    <div id="server-chips" style="display:flex;gap:6px"></div>
+    <button class="srv-current-btn" id="srv-current-btn" onclick="toggleSrvDropdown()">
+      <span id="srv-current-label">[21] Queen Creek</span>
+      <svg id="srv-arrow" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="transition:transform .2s;flex-shrink:0"><path d="m6 9 6 6 6-6"/></svg>
+    </button>
+    <div class="srv-dropdown" id="srv-dropdown">
+      <div id="server-chips"></div>
+    </div>
   </div>
 
   <div class="stats-row">
@@ -364,11 +375,29 @@ function buildChips(){
       S.srvId=srv.id;
       document.querySelectorAll('.srv-chip').forEach(x=>x.classList.remove('active'));
       c.classList.add('active');
+      document.getElementById('srv-current-label').textContent=srv.label;
+      closeSrvDropdown();
       loadData();
     };
     wrap.appendChild(c);
   });
 }
+function toggleSrvDropdown(){
+  const dd=document.getElementById('srv-dropdown');
+  const btn=document.getElementById('srv-current-btn');
+  const arrow=document.getElementById('srv-arrow');
+  const open=dd.classList.toggle('open');
+  btn.classList.toggle('open',open);
+  arrow.style.transform=open?'rotate(180deg)':'rotate(0deg)';
+}
+function closeSrvDropdown(){
+  document.getElementById('srv-dropdown').classList.remove('open');
+  document.getElementById('srv-current-btn').classList.remove('open');
+  document.getElementById('srv-arrow').style.transform='rotate(0deg)';
+}
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.server-bar')) closeSrvDropdown();
+});
 
 // ── LOAD ───────────────────────────────────
 async function loadData(){
@@ -385,6 +414,9 @@ async function loadData(){
     loadAvg(srv?.slug);
     updStats(srv);
     renderLavkas();
+    // Fix 4: if search is active, re-run search with new server data
+    const curQ=document.getElementById('search').value.trim();
+    if(S.mode==='search'&&curQ.length>1) doSearch(curQ);
     setStatus('ok',`${srv?.label||S.srvId} · ${S.lavkas.length} лавок`);
   }catch(e){
     setStatus('error','Ошибка: '+e.message);
@@ -487,7 +519,7 @@ function openModal(lk){
     return `<div class="modal-item-row">
       <span class="mir-name">${esc(name)}${ench?` <span style="color:var(--text-muted);font-size:10px">(${esc(ench)})</span>`:''}</span>
       <span class="mir-count">${counts[i]||0}шт</span>
-      <span class="mir-price ${type}">${fmt(prices[i]||0)} ${cur}</span>
+      <span class="mir-price ${type}">${fmt(prices[i]||0,true)} ${cur}</span>
     </div>`;
   }).join('');
   const srvL=SERVERS.find(s=>s.id===lk.serverId)?.label||`srv${lk.serverId}`;
@@ -548,7 +580,7 @@ function resHTML(it,type,idx){
   return `<div class="search-result-item" style="animation-delay:${Math.min(idx*.02,.35)}s">
     <div class="sri-top">
       <div class="sri-name">${esc(it.name)}</div>
-      <div class="sri-price ${type}">${fmt(it.price)} ${cur}</div>
+      <div class="sri-price ${type}">${fmt(it.price,true)} ${cur}</div>
     </div>
     <div class="sri-meta">
       <span class="sri-tag uid" onclick="openModal(S.lavkas[${lavkaIdx}])">Лавка #${it.uid}</span>
@@ -630,8 +662,16 @@ function drawChart(itemName){
 }
 
 // ── HELPERS ────────────────────────────────
-function fmt(n){ if(!n&&n!==0)return'—'; if(n>=1e6)return(n/1e6).toFixed(2)+'M'; if(n>=1000)return(n/1000).toFixed(n>=1e4?0:1)+'K'; return n.toLocaleString('ru-RU'); }
-function fmtN(n){ if(n>=1e6)return(n/1e6).toFixed(1)+'M'; if(n>=1000)return Math.round(n/1000)+'K'; return Math.round(n).toString(); }
+function fmt(n,full=false){
+  if(!n&&n!==0)return'—';
+  if(full||n<1000000) return Math.round(n).toLocaleString('ru-RU').replace(/\u00a0/g,'.');
+  if(n>=1e9) return fmtAbbr(n/1e9)+'ккк';
+  if(n>=1e6) return fmtAbbr(n/1e6)+'кк';
+  if(n>=1e3) return fmtAbbr(n/1e3)+'к';
+  return Math.round(n).toLocaleString('ru-RU');
+}
+function fmtAbbr(x){ return x%1===0?x.toString():x.toFixed(x>=100?0:x>=10?1:2); }
+function fmtN(n){ if(n>=1e9)return(n/1e9).toFixed(1)+'ккк'; if(n>=1e6)return(n/1e6).toFixed(1)+'кк'; if(n>=1e3)return Math.round(n/1e3)+'к'; return Math.round(n).toString(); }
 function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function setStatus(t,txt){ document.getElementById('status-dot').className='status-dot '+(t==='ok'?'':t); document.getElementById('status-text').textContent=txt; }
 function showSkel(){ document.getElementById('lavka-grid').innerHTML=Array(12).fill(0).map(()=>`<div class="skeleton skel-card"></div>`).join(''); }
