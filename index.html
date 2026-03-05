@@ -383,7 +383,7 @@ const SERVERS=[
   {id:5,  slug:'brainburg',    label:'[5] Brainburg'},
   {id:6,  slug:'saintrose',    label:'[6] SaintRose'},
   {id:7,  slug:'mesa',         label:'[7] Mesa'},
-  {id:8,  slug:'redrock',      label:'[8] Red Rock'},
+  {id:8,  slug:'red-rock',     label:'[8] Red Rock'},
   {id:9,  slug:'yuma',         label:'[9] Yuma'},
   {id:10, slug:'surprise',     label:'[10] Surprise'},
   {id:11, slug:'prescott',     label:'[11] Prescott'},
@@ -392,17 +392,17 @@ const SERVERS=[
   {id:14, slug:'winslow',      label:'[14] Winslow'},
   {id:15, slug:'payson',       label:'[15] Payson'},
   {id:16, slug:'gilbert',      label:'[16] Gilbert'},
-  {id:17, slug:'showlow',      label:'[17] Show Low'},
-  {id:18, slug:'casagrande',   label:'[18] CasaGrande'},
+  {id:17, slug:'show-low',     label:'[17] Show Low'},
+  {id:18, slug:'casa-grande',  label:'[18] Casa Grande'},
   {id:19, slug:'page',         label:'[19] Page'},
-  {id:20, slug:'suncity',      label:'[20] Sun City'},
-  {id:21, slug:'queencreek',   label:'[21] Queen Creek'},
+  {id:20, slug:'sun-city',     label:'[20] Sun City'},
+  {id:21, slug:'queen-creek',  label:'[21] Queen Creek'},
   {id:22, slug:'sedona',       label:'[22] Sedona'},
   {id:23, slug:'holiday',      label:'[23] Holiday'},
   {id:24, slug:'wednesday',    label:'[24] Wednesday'},
   {id:25, slug:'yava',         label:'[25] Yava'},
   {id:26, slug:'faraway',      label:'[26] Faraway'},
-  {id:27, slug:'bumblebee',    label:'[27] Bumble Bee'},
+  {id:27, slug:'bumble-bee',   label:'[27] Bumble Bee'},
   {id:28, slug:'christmas',    label:'[28] Christmas'},
   {id:29, slug:'mirage',       label:'[29] Mirage'},
   {id:30, slug:'love',         label:'[30] Love'},
@@ -501,7 +501,7 @@ async function loadAvg(slug){
   try{
     const r=await ft(url,8000);
     if(r.ok){
-      S.avgPrices=await cp1251(r);
+      S.avgPrices=await r.json();
       // Build normalised lookup: lower+trim → original key
       S.avgPricesNorm={};
       Object.keys(S.avgPrices).forEach(k=>{
