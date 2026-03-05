@@ -289,6 +289,8 @@ footer a{color:var(--accent);text-decoration:none}
   });
 })();
 
+const WORKER='https://portable-market.danvox123hyu.workers.dev';
+
 // ── SERVERS ────────────────────────────────
 const SERVERS=[
   {id:0,  slug:'vice-city',    label:'[0] Vice City'},
@@ -375,8 +377,8 @@ async function loadData(){
   const srv=SERVERS.find(s=>s.id===S.srvId);
   try{
     const [lavRes,itmRes]=await Promise.all([
-      ft(`https://api.arz.market/api/getSelectedMarketplace/${S.srvId}`,8000),
-      ft(`https://server-api.arizona.games/client/json/table/get?project=arizona&server=0&key=inventory_items`,8000)
+      ft(`${WORKER}/api/marketplace/${S.srvId}`,10000),
+      ft(`${WORKER}/api/items`,10000)
     ]);
     if(lavRes.ok){ const r=await lavRes.json(); S.lavkas=Array.isArray(r)?r:[]; }
     if(itmRes.ok){ const r=await itmRes.json(); S.itemsData={}; if(Array.isArray(r)) r.forEach(v=>{S.itemsData[v.id]=v.name;}); }
@@ -392,7 +394,7 @@ async function loadData(){
 
 async function loadAvg(slug){
   if(!slug)return;
-  const url=`https://raw.githubusercontent.com/FREYM1337/forumnick/main/avg_price/info_users_sell_${slug}.json`;
+  const url=`${WORKER}/api/avg?server=${slug}&type=sell`;
   try{ const r=await ft(url,8000); if(r.ok) S.avgPrices=await cp1251(r); }catch(e){}
 }
 
