@@ -795,6 +795,7 @@
 
 // ─── STATE ───
 const SERVERS = [
+  { id: 'vice-city',  label: '[0] Vice City' },
   { id: 'phoenix',    label: '[1] Phoenix' },
   { id: 'tucson',     label: '[2] Tucson' },
   { id: 'scottdale',  label: '[3] Scottdale' },
@@ -832,7 +833,7 @@ const SERVERS = [
 let state = {
   allItems: [],       // [{name, buyPrice, sellPrice, buyVol, sellVol, buyDate, sellDate, buyHistory, server}]
   filtered: [],
-  currentServer: 'phoenix',
+  currentServer: 'queen-creek',
   sort: 'name',
   search: '',
   gridMode: 'grid',  // grid | list
