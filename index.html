@@ -253,6 +253,74 @@ canvas#pm-canvas{width:100%;display:block;cursor:crosshair}
 ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:3px}
 footer{margin-top:50px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);padding:20px 0;border-top:1px solid var(--border)}
 footer a{color:var(--accent);text-decoration:none}
+
+/* ── MOBILE ──────────────────────────────── */
+@media(max-width:640px){
+  #app{padding:0 12px 40px}
+  header{padding:16px 0 14px;gap:8px}
+  .logo-text{font-size:17px}
+  .logo-sub{display:none}
+  .status-pill{font-size:10px;padding:5px 10px}
+  .status-dot{width:5px;height:5px}
+
+  /* Topbar: search full width, refresh btn icon-only */
+  .topbar{grid-template-columns:1fr auto;gap:8px}
+  .icon-btn span{display:none}/* hide text, keep icon */
+  .icon-btn{padding:11px 12px}
+
+  /* Control bar: wrap sort buttons below server */
+  .control-bar{gap:6px}
+  .srv-label{display:none}
+  .sort-divider{display:none}
+  #sort-btns{width:100%;gap:4px}
+  .sort-btn{font-size:10px;padding:4px 9px}
+  .srv-dropdown{width:calc(100vw - 32px);left:0}
+
+  /* Stats: 2-column grid */
+  .stats-row{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+  .stat-pill{font-size:10px;padding:5px 10px}
+
+  /* Mode tabs */
+  .mode-tabs{gap:5px}
+  .mode-tab{padding:6px 14px;font-size:12px}
+
+  /* Lavka grid: single column */
+  #lavka-grid{grid-template-columns:1fr}
+  .lc-count-val{font-size:20px}
+
+  /* Search results: single column */
+  .search-results-cols{grid-template-columns:1fr}
+
+  /* Inline chart stats: 2-col */
+  .chart-stats{gap:12px}
+  .cstat-val{font-size:16px}
+
+  /* Price modal: full screen */
+  #price-modal-overlay{padding:0}
+  #price-modal{max-width:100%;border-radius:0;border-left:none;border-right:none;max-height:100dvh;overflow-y:auto;border-radius:20px 20px 0 0;margin-top:auto}
+  .pm-body{padding:20px 16px 16px}
+  .pm-title{font-size:20px}
+  .pm-kpis{grid-template-columns:1fr 1fr;gap:8px}
+  .pm-kpi-val{font-size:16px}
+
+  /* Lavka modal */
+  #modal{border-radius:20px 20px 0 0;margin-top:auto;max-height:85vh;border-left:none;border-right:none}
+  #modal-overlay{align-items:flex-end;padding:0}
+  .modal-cols{grid-template-columns:1fr}
+
+  /* Search input padding */
+  #search{font-size:13px}
+  .stt-btn{font-size:10px;padding:3px 7px}
+
+  /* Chart tooltips: smaller */
+  .chart-tooltip,.pm-tooltip{font-size:10px;padding:6px 10px}
+  .pm-tooltip-price{font-size:13px}
+}
+@media(max-width:400px){
+  .pm-kpis{grid-template-columns:1fr 1fr}
+  .stats-row{grid-template-columns:1fr 1fr}
+  .sort-btn{font-size:9px;padding:4px 7px}
+}
 </style>
 </head>
 <body>
@@ -285,7 +353,7 @@ footer a{color:var(--accent);text-decoration:none}
     </div>
     <button class="icon-btn" onclick="loadData()">
       <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>
-      Обновить
+      <span>Обновить</span>
     </button>
   </div>
 
@@ -603,6 +671,8 @@ async function loadAvg(slug){
       Object.keys(S.avgPrices).forEach(k=>{ S.avgPricesNorm[k.toLowerCase().trim()]=k; });
     }
   }catch(e){ console.warn('loadAvg',e); }
+  // Redraw chart if one was open
+  if(S.lastChartItem) drawChart(S.lastChartItem);
 }
 
 function getAvgData(name){
@@ -745,8 +815,10 @@ function doSearchItem(q){
   document.getElementById('buy-col-title').style.display='';
   document.getElementById('sell-results').innerHTML=sell.length?sell.map((it,i)=>resHTML(it,'sell',i)).join(''):`<div style="color:var(--text-muted);font-size:12px;padding:12px 4px">Не найдено</div>`;
   document.getElementById('buy-results').innerHTML=buy.length?buy.map((it,i)=>resHTML(it,'buy',i)).join(''):`<div style="color:var(--text-muted);font-size:12px;padding:12px 4px">Не найдено</div>`;
+  // Draw chart for best matching item name (most common in results)
   const firstName=matchIds.size>0?S.itemsData[[...matchIds][0]]:null;
-  if(firstName) drawChart(firstName); else document.getElementById('chart-panel').style.display='none';
+  if(firstName){ S.lastChartItem=firstName; drawChart(firstName); }
+  else { S.lastChartItem=null; document.getElementById('chart-panel').style.display='none'; }
 }
 
 function doSearchOwner(q){
@@ -805,7 +877,8 @@ function drawChart(itemName){
   const vols=pts.map(p=>p[1]||0);
   const mn=Math.min(...prices), mx=Math.max(...prices);
   const tot=vols.reduce((a,b)=>a+b,0);
-  document.getElementById('chart-avg').textContent=fmt(prices[prices.length-1]);
+  const inCur=S.srvId===0?'VC$':'SA$';
+  document.getElementById('chart-avg').textContent=fmt(prices[prices.length-1])+' '+inCur;
   document.getElementById('chart-min').textContent=fmt(mn);
   document.getElementById('chart-max').textContent=fmt(mx);
   document.getElementById('chart-vol').textContent=fmtN(tot);
@@ -871,7 +944,7 @@ function drawChart(itemName){
       tooltip.style.left=Math.min(tipX,rect.width-160)+'px';
       tooltip.style.top=Math.max(0,tipY)+'px';
       tooltip.style.display='block';
-      document.getElementById('ct-price').textContent=fmt(prices[idx],true)+' SA$';
+      document.getElementById('ct-price').textContent=fmt(prices[idx],true)+' '+(S.srvId===0?'VC$':'SA$');
       document.getElementById('ct-date').textContent=dates[idx]||'';
     });
     canvas.addEventListener('mouseleave',()=>{ tooltip.style.display='none'; });
@@ -886,7 +959,7 @@ function openPriceModal(itemName){
   const canvas=document.getElementById('pm-canvas');
   document.getElementById('pm-title').textContent=itemName;
   const srv=SERVERS.find(s=>s.id===S.srvId);
-  document.getElementById('pm-sub').textContent=`Средняя цена продажи · ${srv?.label||''}`;
+  document.getElementById('pm-sub').textContent=`Средняя цена продажи (${S.srvId===0?'VC$':'SA$'}) · ${srv?.label||''}`;
   overlay.classList.add('open');
 
   const data=getAvgData(itemName);
@@ -911,9 +984,10 @@ function openPriceModal(itemName){
   const glowRgb=trend>0?'74,222,128':trend<0?'248,113,113':'79,142,247';
   const glowHex=trend>0?'#4ade80':trend<0?'#f87171':'#4f8ef7';
 
-  document.getElementById('pm-avg').textContent=fmt(last,true);
-  document.getElementById('pm-min').textContent=fmt(mn,true);
-  document.getElementById('pm-max').textContent=fmt(mx,true);
+  const cur0=S.srvId===0?'VC$':'SA$';
+  document.getElementById('pm-avg').textContent=fmt(last,true)+' '+cur0;
+  document.getElementById('pm-min').textContent=fmt(mn,true)+' '+cur0;
+  document.getElementById('pm-max').textContent=fmt(mx,true)+' '+cur0;
   document.getElementById('pm-vol').textContent=fmtN(tot);
   const chEl=document.getElementById('pm-change');
   chEl.textContent=(changePct>=0?'+':'')+changePct.toFixed(1)+'% за 14д';
@@ -953,7 +1027,7 @@ function setupPmTooltip(canvas, prices, dates, vols, mn, mx, glowRgb, glowHex){
     tt.style.display='block';
     tt.style.borderColor=`rgba(${glowRgb},.4)`;
     document.getElementById('pm-tp-price').style.color=glowHex;
-    document.getElementById('pm-tp-price').textContent=fmt(prices[idx],true)+' SA$';
+    document.getElementById('pm-tp-price').textContent=fmt(prices[idx],true)+' '+(S.srvId===0?'VC$':'SA$');
     document.getElementById('pm-tp-date').textContent=dates[idx]||'';
     document.getElementById('pm-tp-vol').textContent=vols[idx]?`Объём: ${fmtN(vols[idx])} шт`:'';
   };
