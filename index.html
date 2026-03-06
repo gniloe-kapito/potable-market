@@ -4,75 +4,53 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ArzMarket — portable market BY Nikitos_Ciganin</title>
+
+<!-- OG / Discord / Telegram -->
+<meta property="og:title" content="ArzMarket — Маркет Arizona RP">
+<meta property="og:description" content="Просмотр лавок, поиск товаров и история цен на серверах Arizona RP">
+<meta property="og:image" content="photo1.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ArzMarket — Маркет Arizona RP">
+<meta name="twitter:description" content="Просмотр лавок, поиск товаров и история цен на серверах Arizona RP">
+<meta name="twitter:image" content="photo1.png">
+
+<!-- Browser tab icon -->
+<link rel="icon" type="image/png" href="photo2.png">
+<link rel="apple-touch-icon" href="photo2.png">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg:#080b14; --surface:rgba(255,255,255,.04); --surface2:rgba(255,255,255,.07);
-  --border:rgba(255,255,255,.08); --border2:rgba(255,255,255,.14);
-  --accent:#4f8ef7; --accent2:#a259f7; --green:#4ade80; --red:#f87171; --yellow:#fbbf24;
-  --text:#e8eaf6; --text-dim:rgba(232,234,246,.5); --text-muted:rgba(232,234,246,.28);
-  --radius:14px; --radius-sm:8px;
+:root{
+  --bg:#080b14;--surface:rgba(255,255,255,.04);--surface2:rgba(255,255,255,.07);
+  --border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.14);
+  --accent:#4f8ef7;--accent2:#a259f7;--green:#4ade80;--red:#f87171;--yellow:#fbbf24;
+  --text:#e8eaf6;--text-dim:rgba(232,234,246,.5);--text-muted:rgba(232,234,246,.28);
+  --radius:14px;--radius-sm:8px;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;overflow-x:hidden}
 
 /* BOKEH */
-
-/* есть пару моментов которые надо пофиксить
-
-
-
-
-
-график который открывается при нажатии на предмет в лавке нужно переработать. сделать за последнии 14 дней так же само окно увеличить.
-
-
-
-редезайн окна из пункта 1  под более стильный вариант
-
-
-
-график который появляется при поиске скина должен поддерживать взаимодействие а именно при наведении в точку должна показываться цена в месте где навели
-
-
-
-сделай кнопку arzmarket кликабельной что-бы вернуться на главную с полным сбросом поисков и т.д
-
-
-
-при перезаходе на сайт поиск должен полностью обнуляться 
-
-
-
-на вкладке лавки если у игрока длинный ник надпись сервера сьезжает, исправь
-
-
-
-сделай кнопки сортировки все сразу возле кнопки сервера 
-
-сделать тайт при отправке в дс/тг а так же фото для вкладке в браузере везде указать название photo1.png photo2.png
-
-сделать мобильную версию
-  */
 #bokeh{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
 .bokeh-light{position:absolute;border-radius:50%;filter:blur(110px);opacity:0;animation:bokehFloat var(--dur) cubic-bezier(.37,0,.63,1) infinite alternate;will-change:transform,opacity}
 @keyframes bokehFloat{
-  0%{opacity:var(--op-min);transform:translate(0px,0px) scale(1)}
-  20%{opacity:calc(var(--op-min)*1.5)}
+  0%{opacity:var(--op-min);transform:translate(0,0) scale(1)}
   50%{opacity:var(--op-max);transform:translate(calc(var(--tx)*.55),calc(var(--ty)*.6)) scale(calc(1+(var(--sc)-1)*.55))}
-  80%{opacity:calc(var(--op-max)*.7)}
   100%{opacity:var(--op-min);transform:translate(var(--tx),var(--ty)) scale(var(--sc))}
 }
 
-/* LAYOUT */
 #app{position:relative;z-index:1;max-width:1400px;margin:0 auto;padding:0 20px 60px}
 
 /* HEADER */
 header{display:flex;align-items:center;justify-content:space-between;padding:24px 0 20px;gap:12px;flex-wrap:wrap}
-.logo{display:flex;align-items:center;gap:12px}
-.logo-icon{width:40px;height:40px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 0 20px rgba(79,142,247,.4);flex-shrink:0}
+.logo{display:flex;align-items:center;gap:12px;cursor:pointer;text-decoration:none;color:inherit}
+.logo:hover .logo-icon{box-shadow:0 0 28px rgba(79,142,247,.6)}
+.logo-icon{width:40px;height:40px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 0 20px rgba(79,142,247,.4);flex-shrink:0;transition:box-shadow .2s}
 .logo-text{font-size:20px;font-weight:800;letter-spacing:-.5px}
 .logo-text span{background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .logo-sub{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-muted);letter-spacing:2px;text-transform:uppercase;margin-top:2px}
@@ -83,32 +61,38 @@ header{display:flex;align-items:center;justify-content:space-between;padding:24p
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 
 /* TOPBAR */
-.topbar{display:grid;grid-template-columns:1fr auto auto;gap:10px;margin-bottom:14px;align-items:center}
-@media(max-width:640px){.topbar{grid-template-columns:1fr 1fr}.topbar .search-wrap{grid-column:1/-1}}
+.topbar{display:grid;grid-template-columns:1fr auto;gap:10px;margin-bottom:14px;align-items:center}
 .search-wrap{position:relative}
-.search-wrap svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-muted);pointer-events:none}
-#search{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px 12px 42px;color:var(--text);font-family:'Syne',sans-serif;font-size:14px;outline:none;backdrop-filter:blur(12px);transition:border-color .2s,box-shadow .2s}
+.search-wrap>svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-muted);pointer-events:none}
+#search{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 120px 12px 42px;color:var(--text);font-family:'Syne',sans-serif;font-size:14px;outline:none;backdrop-filter:blur(12px);transition:border-color .2s,box-shadow .2s}
 #search::placeholder{color:var(--text-muted)}
 #search:focus{border-color:rgba(79,142,247,.5);box-shadow:0 0 0 3px rgba(79,142,247,.1)}
+.search-type-toggle{position:absolute;right:10px;top:50%;transform:translateY(-50%);display:flex;background:rgba(0,0,0,.3);border-radius:8px;padding:3px;gap:2px}
+.stt-btn{background:none;border:none;color:var(--text-muted);font-family:'Syne',sans-serif;font-size:11px;font-weight:700;padding:3px 10px;border-radius:6px;cursor:pointer;transition:all .15s}
+.stt-btn.active{background:rgba(79,142,247,.25);color:var(--accent)}
 .icon-btn{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:11px 16px;color:var(--text-dim);font-family:'Syne',sans-serif;font-size:12px;font-weight:600;cursor:pointer;backdrop-filter:blur(12px);transition:all .18s;display:flex;align-items:center;gap:7px;white-space:nowrap}
 .icon-btn:hover{background:var(--surface2);color:var(--text);border-color:var(--border2)}
-.icon-btn.active{background:rgba(79,142,247,.15);border-color:rgba(79,142,247,.4);color:var(--accent)}
 
-/* SERVER BAR */
-.server-bar{position:relative;display:flex;align-items:center;gap:8px;margin-bottom:16px}
-.srv-current-btn{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:6px 14px;color:var(--text);font-family:'Syne',sans-serif;font-size:12px;font-weight:700;cursor:pointer;backdrop-filter:blur(12px);transition:all .18s}
+/* SERVER + SORT BAR — fix 7: sort buttons inline with server */
+.control-bar{display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap;position:relative}
+.srv-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-muted);text-transform:uppercase;letter-spacing:2px;white-space:nowrap;flex-shrink:0}
+.srv-current-btn{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:6px 14px;color:var(--text);font-family:'Syne',sans-serif;font-size:12px;font-weight:700;cursor:pointer;backdrop-filter:blur(12px);transition:all .18s;flex-shrink:0}
 .srv-current-btn:hover{background:var(--surface2);border-color:var(--border2)}
 .srv-current-btn.open{background:rgba(79,142,247,.15);border-color:rgba(79,142,247,.4);color:var(--accent)}
 .srv-dropdown{display:none;position:absolute;top:calc(100% + 8px);left:0;z-index:50;background:rgba(10,14,26,.97);border:1px solid var(--border2);border-radius:14px;padding:10px;backdrop-filter:blur(20px);box-shadow:0 16px 50px rgba(0,0,0,.6);width:420px;animation:dropIn .18s ease}
 .srv-dropdown.open{display:block}
 @keyframes dropIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
 #server-chips{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
-.srv-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-muted);text-transform:uppercase;letter-spacing:2px;white-space:nowrap;margin-right:2px;flex-shrink:0}
-.srv-chip{background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:5px 12px;font-size:11px;font-weight:600;cursor:pointer;color:var(--text-muted);transition:all .18s;white-space:nowrap;flex-shrink:0}
+.srv-chip{background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:5px 12px;font-size:11px;font-weight:600;cursor:pointer;color:var(--text-muted);transition:all .18s;white-space:nowrap}
 .srv-chip:hover{color:var(--text);border-color:var(--border2)}
-.srv-chip.active{background:linear-gradient(135deg,rgba(79,142,247,.2),rgba(162,89,247,.2));border-color:rgba(79,142,247,.5);color:var(--text);box-shadow:0 0 12px rgba(79,142,247,.12)}
+.srv-chip.active{background:linear-gradient(135deg,rgba(79,142,247,.2),rgba(162,89,247,.2));border-color:rgba(79,142,247,.5);color:var(--text)}
+/* Sort buttons inline */
+.sort-divider{width:1px;height:20px;background:var(--border);flex-shrink:0;margin:0 2px}
+.sort-btn{background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:5px 12px;font-family:'Syne',sans-serif;font-size:11px;font-weight:600;cursor:pointer;color:var(--text-muted);transition:all .18s;white-space:nowrap;flex-shrink:0}
+.sort-btn:hover{color:var(--text);border-color:var(--border2)}
+.sort-btn.active{background:rgba(79,142,247,.18);border-color:rgba(79,142,247,.4);color:var(--accent)}
 
-/* STATS ROW */
+/* STATS */
 .stats-row{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
 .stat-pill{background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:6px 14px;font-family:'JetBrains Mono',monospace;font-size:11px;display:flex;gap:7px;align-items:center;backdrop-filter:blur(10px)}
 .stat-pill .sv{font-weight:700}.stat-pill .sk{color:var(--text-muted)}
@@ -127,10 +111,12 @@ header{display:flex;align-items:center;justify-content:space-between;padding:24p
 .lavka-card:hover{transform:translateY(-2px);border-color:rgba(79,142,247,.3);box-shadow:0 6px 28px rgba(79,142,247,.1)}
 .lavka-card:hover::before{opacity:1}
 @keyframes cardIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-.lc-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;gap:8px}
-.lc-owner{font-size:15px;font-weight:800;font-family:'Syne',sans-serif;letter-spacing:-.2px}
+/* fix 6: long nick — header clamps */
+.lc-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;gap:8px;min-width:0}
+.lc-owner-wrap{flex:1;min-width:0;overflow:hidden}
+.lc-owner{font-size:15px;font-weight:800;font-family:'Syne',sans-serif;letter-spacing:-.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .lc-uid{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);margin-top:2px}
-.lc-srv-badge{font-family:'JetBrains Mono',monospace;font-size:9px;background:rgba(79,142,247,.12);border:1px solid rgba(79,142,247,.2);border-radius:6px;padding:3px 7px;color:var(--accent);white-space:nowrap;flex-shrink:0}
+.lc-srv-badge{font-family:'JetBrains Mono',monospace;font-size:9px;background:rgba(79,142,247,.12);border:1px solid rgba(79,142,247,.2);border-radius:6px;padding:3px 7px;color:var(--accent);white-space:nowrap;flex-shrink:0;align-self:flex-start}
 .lc-counts{display:grid;grid-template-columns:1fr 1fr;gap:6px}
 .lc-count-box{background:rgba(0,0,0,.2);border-radius:var(--radius-sm);padding:8px 10px}
 .lc-count-label{font-family:'Syne',sans-serif;font-size:9px;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;font-weight:600}
@@ -146,8 +132,8 @@ header{display:flex;align-items:center;justify-content:space-between;padding:24p
 #search-view{display:none}
 #search-view.visible{display:flex;flex-direction:column;gap:16px}
 
-/* Chart */
-.chart-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;backdrop-filter:blur(16px)}
+/* Inline chart (search) */
+.chart-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;backdrop-filter:blur(16px);position:relative}
 .chart-header{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px}
 .chart-title{font-size:16px;font-weight:800;margin-bottom:3px}
 .chart-sub{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted)}
@@ -155,9 +141,13 @@ header{display:flex;align-items:center;justify-content:space-between;padding:24p
 .cstat{display:flex;flex-direction:column;gap:2px}
 .cstat-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px}
 .cstat-val{font-size:20px;font-weight:800}
-canvas#price-chart{width:100%;display:block}
+/* Tooltip for inline chart */
+.chart-tooltip{position:absolute;background:rgba(10,14,28,.95);border:1px solid rgba(79,142,247,.35);border-radius:8px;padding:7px 12px;pointer-events:none;display:none;font-family:'JetBrains Mono',monospace;font-size:11px;white-space:nowrap;z-index:10;box-shadow:0 4px 20px rgba(0,0,0,.5)}
+.chart-tooltip-price{font-size:14px;font-weight:700;color:var(--accent)}
+.chart-tooltip-date{color:var(--text-muted);margin-top:2px;font-size:10px}
+canvas#price-chart{width:100%;display:block;cursor:crosshair}
 
-/* Search results columns */
+/* Search results */
 .search-results-cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 @media(max-width:700px){.search-results-cols{grid-template-columns:1fr}}
 .src-col-title{font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:2px;margin-bottom:10px;padding:0 2px}
@@ -172,8 +162,23 @@ canvas#price-chart{width:100%;display:block}
 .sri-tag{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:6px;padding:2px 7px}
 .sri-tag.uid{color:var(--accent);border-color:rgba(79,142,247,.25);background:rgba(79,142,247,.08);cursor:pointer}
 .sri-tag.uid:hover{background:rgba(79,142,247,.16)}
+.sri-name-btn{cursor:pointer;transition:color .15s}
+.sri-name-btn:hover{color:var(--accent)}
+.sri-name-btn::after{content:' 📈';font-size:11px;opacity:.4}
+.sri-name-btn:hover::after{opacity:1}
 
-/* MODAL */
+/* Owner search */
+.owner-result-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:8px;backdrop-filter:blur(12px);transition:border-color .18s;animation:cardIn .3s ease both;cursor:pointer}
+.owner-result-item:hover{border-color:rgba(79,142,247,.35);background:var(--surface2)}
+.ori-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.ori-name{font-size:15px;font-weight:800}
+.ori-uid{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent)}
+.ori-counts{display:flex;gap:8px;flex-wrap:wrap}
+.ori-count{font-family:'JetBrains Mono',monospace;font-size:10px;padding:3px 8px;border-radius:6px}
+.ori-count.sell{background:rgba(74,222,128,.1);color:var(--green);border:1px solid rgba(74,222,128,.2)}
+.ori-count.buy{background:rgba(248,113,113,.1);color:var(--red);border:1px solid rgba(248,113,113,.2)}
+
+/* LAVKA MODAL */
 #modal-overlay{position:fixed;inset:0;background:rgba(8,11,20,.85);backdrop-filter:blur(14px);z-index:100;display:none;align-items:center;justify-content:center;padding:20px}
 #modal-overlay.open{display:flex}
 #modal{background:rgba(14,18,32,.97);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:28px;max-width:700px;width:100%;max-height:90vh;overflow-y:auto;position:relative;box-shadow:0 30px 70px rgba(0,0,0,.6);animation:modalIn .22s ease}
@@ -192,6 +197,50 @@ canvas#price-chart{width:100%;display:block}
 .mir-price{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;white-space:nowrap}
 .mir-price.sell{color:var(--green)}.mir-price.buy{color:var(--red)}
 
+/* PRICE CHART MODAL — fix 1+2: bigger, redesigned */
+#price-modal-overlay{position:fixed;inset:0;background:rgba(4,6,16,.92);backdrop-filter:blur(20px);z-index:200;display:none;align-items:center;justify-content:center;padding:16px}
+#price-modal-overlay.open{display:flex}
+#price-modal{
+  background:rgba(8,12,24,.98);
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:24px;
+  padding:0;
+  max-width:860px;
+  width:100%;
+  max-height:92vh;
+  overflow:hidden;
+  position:relative;
+  box-shadow:0 0 0 1px rgba(79,142,247,.12),0 40px 100px rgba(0,0,0,.8);
+  animation:priceModalIn .28s cubic-bezier(.34,1.2,.64,1)
+}
+@keyframes priceModalIn{from{opacity:0;transform:scale(.88) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+/* Glowing border top */
+.pm-glow-bar{height:3px;background:linear-gradient(90deg,transparent,var(--glow-color, #4f8ef7),rgba(162,89,247,.8),transparent);position:relative;z-index:2}
+.pm-body{padding:28px 32px 24px;position:relative;z-index:1}
+/* Ambient glow bg */
+.pm-ambient{position:absolute;top:0;left:50%;transform:translateX(-50%);width:60%;height:200px;background:radial-gradient(ellipse at top,rgba(var(--glow-rgb,79,142,247),.12) 0%,transparent 70%);pointer-events:none;z-index:0}
+.pm-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:24px;position:relative;z-index:1}
+.pm-title-wrap{}
+.pm-badge{font-family:'JetBrains Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:2px;color:rgba(var(--glow-rgb,79,142,247),1);background:rgba(var(--glow-rgb,79,142,247),.12);border:1px solid rgba(var(--glow-rgb,79,142,247),.25);border-radius:100px;padding:3px 10px;display:inline-block;margin-bottom:8px}
+.pm-title{font-size:26px;font-weight:800;letter-spacing:-.5px;line-height:1.1}
+.pm-sub{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);margin-top:4px}
+.pm-close-btn{background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:10px;color:var(--text-dim);cursor:pointer;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .18s;flex-shrink:0;margin-top:2px}
+.pm-close-btn:hover{color:var(--text);background:rgba(255,255,255,.1)}
+.pm-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;position:relative;z-index:1}
+.pm-kpi{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:12px;padding:12px 14px}
+.pm-kpi-label{font-family:'JetBrains Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:4px}
+.pm-kpi-val{font-size:20px;font-weight:800;font-family:'Syne',sans-serif;letter-spacing:-.4px}
+.pm-kpi-change{font-family:'JetBrains Mono',monospace;font-size:10px;margin-top:2px}
+/* Chart container */
+.pm-chart-wrap{position:relative;z-index:1;background:rgba(0,0,0,.2);border-radius:14px;padding:16px 16px 8px;border:1px solid var(--border)}
+canvas#pm-canvas{width:100%;display:block;cursor:crosshair}
+/* Chart tooltip */
+.pm-tooltip{position:absolute;background:rgba(8,12,28,.97);border:1px solid rgba(var(--glow-rgb,79,142,247),.4);border-radius:10px;padding:8px 14px;pointer-events:none;display:none;font-family:'JetBrains Mono',monospace;font-size:11px;white-space:nowrap;z-index:20;box-shadow:0 4px 20px rgba(0,0,0,.6),0 0 0 1px rgba(var(--glow-rgb,79,142,247),.15)}
+.pm-tooltip-price{font-size:15px;font-weight:700;margin-bottom:2px}
+.pm-tooltip-date{color:var(--text-muted);font-size:10px}
+.pm-tooltip-vol{color:var(--text-muted);font-size:10px;margin-top:1px}
+.pm-no-data{text-align:center;padding:50px 20px}
+
 /* MISC */
 .empty{grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--text-muted)}
 .empty-icon{font-size:44px;margin-bottom:14px}
@@ -204,47 +253,6 @@ canvas#price-chart{width:100%;display:block}
 ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:3px}
 footer{margin-top:50px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);padding:20px 0;border-top:1px solid var(--border)}
 footer a{color:var(--accent);text-decoration:none}
-
-/* Search type toggle */
-.search-wrap{position:relative}
-.search-type-toggle{position:absolute;right:10px;top:50%;transform:translateY(-50%);display:flex;background:rgba(0,0,0,.3);border-radius:8px;padding:3px;gap:2px}
-.stt-btn{background:none;border:none;color:var(--text-muted);font-family:'Syne',sans-serif;font-size:11px;font-weight:700;padding:3px 10px;border-radius:6px;cursor:pointer;transition:all .15s}
-.stt-btn.active{background:rgba(79,142,247,.25);color:var(--accent)}
-#search{padding-right:110px}
-
-/* Owner search result */
-.owner-result-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:8px;backdrop-filter:blur(12px);transition:border-color .18s,background .18s;animation:cardIn .3s ease both;cursor:pointer}
-.owner-result-item:hover{border-color:rgba(79,142,247,.35);background:var(--surface2)}
-.ori-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-.ori-name{font-size:15px;font-weight:800}
-.ori-uid{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent)}
-.ori-counts{display:flex;gap:8px}
-.ori-count{font-family:'JetBrains Mono',monospace;font-size:10px;padding:3px 8px;border-radius:6px}
-.ori-count.sell{background:rgba(74,222,128,.1);color:var(--green);border:1px solid rgba(74,222,128,.2)}
-.ori-count.buy{background:rgba(248,113,113,.1);color:var(--red);border:1px solid rgba(248,113,113,.2)}
-
-/* Price modal */
-#price-modal-overlay{position:fixed;inset:0;background:rgba(4,7,18,.9);backdrop-filter:blur(18px);z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
-#price-modal-overlay.open{display:flex}
-#price-modal{background:rgba(10,14,28,.98);border:1px solid rgba(79,142,247,.2);border-radius:22px;padding:28px 28px 22px;max-width:680px;width:100%;position:relative;box-shadow:0 0 80px rgba(79,142,247,.12),0 30px 80px rgba(0,0,0,.7);animation:priceModalIn .25s cubic-bezier(.34,1.3,.64,1)}
-@keyframes priceModalIn{from{opacity:0;transform:scale(.9) translateY(16px)}to{opacity:1;transform:scale(1) translateY(0)}}
-.pm-glow{position:absolute;inset:-1px;border-radius:22px;pointer-events:none;background:linear-gradient(135deg,rgba(79,142,247,.15),rgba(162,89,247,.1),transparent 60%);z-index:0}
-#price-modal>*:not(.pm-glow){position:relative;z-index:1}
-.pm-header{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-bottom:20px}
-.pm-title{font-size:22px;font-weight:800;letter-spacing:-.3px;margin-bottom:3px}
-.pm-sub{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted)}
-.pm-stats{display:flex;gap:18px;flex-wrap:wrap}
-.pm-stat{display:flex;flex-direction:column;gap:3px}
-.pm-stat-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px}
-.pm-stat-val{font-size:22px;font-weight:800;font-family:'Syne',sans-serif;letter-spacing:-.5px}
-canvas#pm-canvas{width:100%;display:block;border-radius:10px}
-.pm-no-data{text-align:center;padding:40px 20px}
-
-/* Clickable item name in search results */
-.sri-name-btn{cursor:pointer;transition:color .15s;display:inline}
-.sri-name-btn:hover{color:var(--accent)}
-.sri-name-btn::after{content:' 📈';font-size:11px;opacity:.5}
-.sri-name-btn:hover::after{opacity:1}
 </style>
 </head>
 <body>
@@ -252,13 +260,14 @@ canvas#pm-canvas{width:100%;display:block;border-radius:10px}
 <div id="app">
 
   <header>
-    <div class="logo">
+    <!-- fix 4: logo is clickable → reset -->
+    <a class="logo" href="#" onclick="resetHome(event)">
       <div class="logo-icon">◈</div>
       <div>
         <div class="logo-text">Arz<span>Market</span></div>
         <div class="logo-sub">portable market BY Nikitos_Ciganin</div>
       </div>
-    </div>
+    </a>
     <div class="status-pill">
       <div class="status-dot loading" id="status-dot"></div>
       <span id="status-text">Загрузка...</span>
@@ -278,13 +287,10 @@ canvas#pm-canvas{width:100%;display:block;border-radius:10px}
       <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>
       Обновить
     </button>
-    <button class="icon-btn" id="sort-btn" onclick="cycleSort()">
-      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 6h18M7 12h10M11 18h2"/></svg>
-      <span id="sort-label">Сортировка</span>
-    </button>
   </div>
 
-  <div class="server-bar">
+  <!-- fix 7: sort buttons next to server dropdown -->
+  <div class="control-bar" id="control-bar">
     <span class="srv-label">Сервер</span>
     <button class="srv-current-btn" id="srv-current-btn" onclick="toggleSrvDropdown()">
       <span id="srv-current-label">[21] Queen Creek</span>
@@ -293,6 +299,8 @@ canvas#pm-canvas{width:100%;display:block;border-radius:10px}
     <div class="srv-dropdown" id="srv-dropdown">
       <div id="server-chips"></div>
     </div>
+    <div class="sort-divider"></div>
+    <div id="sort-btns" style="display:flex;gap:5px;flex-wrap:wrap"></div>
   </div>
 
   <div class="stats-row">
@@ -308,31 +316,31 @@ canvas#pm-canvas{width:100%;display:block;border-radius:10px}
     <button class="mode-tab" id="tab-search" onclick="setMode('search')">🔍 Поиск</button>
   </div>
 
-  <!-- LAVKA GRID -->
   <div id="lavka-grid"></div>
 
-  <!-- SEARCH VIEW -->
   <div id="search-view">
-    <!-- Price chart -->
+    <!-- Inline chart with hover tooltip -->
     <div id="chart-panel" style="display:none">
       <div class="chart-wrap">
         <div class="chart-header">
           <div>
             <div class="chart-title" id="chart-item-name">—</div>
-            <div class="chart-sub">Средняя цена продажи · последние 30 дней</div>
+            <div class="chart-sub">Средняя цена продажи · 30 дней · наведи для деталей</div>
           </div>
           <div class="chart-stats">
             <div class="cstat"><div class="cstat-label">Сейчас</div><div class="cstat-val" id="chart-avg" style="color:var(--accent)">—</div></div>
-            <div class="cstat"><div class="cstat-label">Мин 30д</div><div class="cstat-val" id="chart-min" style="color:var(--green)">—</div></div>
-            <div class="cstat"><div class="cstat-label">Макс 30д</div><div class="cstat-val" id="chart-max" style="color:var(--red)">—</div></div>
-            <div class="cstat"><div class="cstat-label">Объём 30д</div><div class="cstat-val" id="chart-vol" style="color:var(--text-dim)">—</div></div>
+            <div class="cstat"><div class="cstat-label">Мин</div><div class="cstat-val" id="chart-min" style="color:var(--green)">—</div></div>
+            <div class="cstat"><div class="cstat-label">Макс</div><div class="cstat-val" id="chart-max" style="color:var(--red)">—</div></div>
+            <div class="cstat"><div class="cstat-label">Объём</div><div class="cstat-val" id="chart-vol" style="color:var(--text-dim)">—</div></div>
           </div>
         </div>
-        <canvas id="price-chart" height="200"></canvas>
+        <canvas id="price-chart" height="180"></canvas>
+        <div class="chart-tooltip" id="chart-tooltip">
+          <div class="chart-tooltip-price" id="ct-price">—</div>
+          <div class="chart-tooltip-date" id="ct-date">—</div>
+        </div>
       </div>
     </div>
-
-    <!-- Two columns: sell / buy -->
     <div class="search-results-cols">
       <div>
         <div class="src-col-title sell" id="sell-col-title">ПРОДАЮТ · 0</div>
@@ -364,25 +372,49 @@ canvas#pm-canvas{width:100%;display:block;border-radius:10px}
 <!-- PRICE CHART MODAL -->
 <div id="price-modal-overlay" onclick="closePriceModal(event)">
   <div id="price-modal">
-    <button class="modal-close" onclick="closePriceModal()" style="top:16px;right:16px">✕</button>
-    <div class="pm-glow" id="pm-glow"></div>
-    <div class="pm-header">
-      <div>
-        <div class="pm-title" id="pm-title">—</div>
-        <div class="pm-sub">Средняя цена продажи · последние 7 дней</div>
+    <div class="pm-glow-bar" id="pm-glow-bar"></div>
+    <div class="pm-ambient" id="pm-ambient"></div>
+    <div class="pm-body">
+      <div class="pm-top">
+        <div class="pm-title-wrap">
+          <div class="pm-badge" id="pm-badge">история цен · 14 дней</div>
+          <div class="pm-title" id="pm-title">—</div>
+          <div class="pm-sub" id="pm-sub">Средняя цена продажи на сервере</div>
+        </div>
+        <button class="pm-close-btn" onclick="closePriceModal()">✕</button>
       </div>
-      <div class="pm-stats">
-        <div class="pm-stat"><div class="pm-stat-label">Сейчас</div><div class="pm-stat-val" id="pm-avg" style="color:var(--accent)">—</div></div>
-        <div class="pm-stat"><div class="pm-stat-label">Мин</div><div class="pm-stat-val" id="pm-min" style="color:var(--green)">—</div></div>
-        <div class="pm-stat"><div class="pm-stat-label">Макс</div><div class="pm-stat-val" id="pm-max" style="color:var(--red)">—</div></div>
-        <div class="pm-stat"><div class="pm-stat-label">Объём</div><div class="pm-stat-val" id="pm-vol" style="color:var(--text-dim)">—</div></div>
+      <div class="pm-kpis">
+        <div class="pm-kpi">
+          <div class="pm-kpi-label">Последняя цена</div>
+          <div class="pm-kpi-val" id="pm-avg">—</div>
+          <div class="pm-kpi-change" id="pm-change">—</div>
+        </div>
+        <div class="pm-kpi">
+          <div class="pm-kpi-label">Минимум</div>
+          <div class="pm-kpi-val" id="pm-min" style="color:var(--green)">—</div>
+        </div>
+        <div class="pm-kpi">
+          <div class="pm-kpi-label">Максимум</div>
+          <div class="pm-kpi-val" id="pm-max" style="color:var(--red)">—</div>
+        </div>
+        <div class="pm-kpi">
+          <div class="pm-kpi-label">Объём сделок</div>
+          <div class="pm-kpi-val" id="pm-vol" style="color:var(--text-dim)">—</div>
+        </div>
       </div>
-    </div>
-    <canvas id="pm-canvas"></canvas>
-    <div class="pm-no-data" id="pm-no-data" style="display:none">
-      <div style="font-size:32px;margin-bottom:10px">📊</div>
-      <div style="font-size:15px;font-weight:700;color:var(--text-dim)">Нет данных о ценах</div>
-      <div style="font-size:11px;color:var(--text-muted);margin-top:4px">Для этого сервера история цен недоступна</div>
+      <div class="pm-chart-wrap">
+        <canvas id="pm-canvas"></canvas>
+        <div class="pm-tooltip" id="pm-tooltip">
+          <div class="pm-tooltip-price" id="pm-tp-price">—</div>
+          <div class="pm-tooltip-date" id="pm-tp-date">—</div>
+          <div class="pm-tooltip-vol" id="pm-tp-vol">—</div>
+        </div>
+      </div>
+      <div class="pm-no-data" id="pm-no-data" style="display:none">
+        <div style="font-size:36px;margin-bottom:12px">📊</div>
+        <div style="font-size:16px;font-weight:700;color:var(--text-dim)">Нет данных о ценах</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:5px">История цен для этого сервера недоступна</div>
+      </div>
     </div>
   </div>
 </div>
@@ -390,87 +422,101 @@ canvas#pm-canvas{width:100%;display:block;border-radius:10px}
 <script>
 // ── BOKEH ──────────────────────────────────
 (function(){
-  const bokeh=document.getElementById('bokeh');
-  [{color:'79,142,247',n:5},{color:'162,89,247',n:4},{color:'247,89,89',n:3},
-   {color:'89,247,200',n:3},{color:'247,190,89',n:3},{color:'89,147,247',n:4},
-   {color:'180,89,247',n:2},{color:'89,200,247',n:2}].forEach(({color,n})=>{
+  const b=document.getElementById('bokeh');
+  [{c:'79,142,247',n:5},{c:'162,89,247',n:4},{c:'247,89,89',n:3},
+   {c:'89,247,200',n:3},{c:'247,190,89',n:3},{c:'89,147,247',n:4},
+   {c:'180,89,247',n:2},{c:'89,200,247',n:2}].forEach(({c,n})=>{
     for(let i=0;i<n;i++){
       const el=document.createElement('div');el.className='bokeh-light';
-      const size=180+Math.random()*360,dur=10+Math.random()*18;
+      const sz=180+Math.random()*360,dur=10+Math.random()*18;
       const tx=(Math.random()-.5)*160,ty=(Math.random()-.5)*160,sc=.75+Math.random()*.55;
-      const oMin=.03+Math.random()*.04,oMax=.09+Math.random()*.13;
-      el.style.cssText=`width:${size}px;height:${size}px;left:${Math.random()*110-5}%;top:${Math.random()*110-5}%;
-        background:radial-gradient(circle,rgba(${color},.95) 0%,rgba(${color},.6) 25%,rgba(${color},.2) 55%,rgba(${color},0) 75%);
-        --dur:${dur}s;--tx:${tx}px;--ty:${ty}px;--sc:${sc};--op-min:${oMin};--op-max:${oMax};
+      const om=.03+Math.random()*.04,ox=.09+Math.random()*.13;
+      el.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*110-5}%;top:${Math.random()*110-5}%;
+        background:radial-gradient(circle,rgba(${c},.95) 0%,rgba(${c},.6) 25%,rgba(${c},.2) 55%,rgba(${c},0) 75%);
+        --dur:${dur}s;--tx:${tx}px;--ty:${ty}px;--sc:${sc};--op-min:${om};--op-max:${ox};
         animation-delay:${-Math.random()*dur}s`;
-      bokeh.appendChild(el);
+      b.appendChild(el);
     }
   });
 })();
 
 const WORKER='https://portable-market.danvox123hyu.workers.dev';
 
-// ── SERVERS ────────────────────────────────
 const SERVERS=[
-  {id:0,  slug:'vc',           label:'[0] Vice City'},
-  {id:1,  slug:'phoenix',      label:'[1] Phoenix'},
-  {id:2,  slug:'tucson',       label:'[2] Tucson'},
-  {id:3,  slug:'scottdale',    label:'[3] Scottdale'},
-  {id:4,  slug:'chandler',     label:'[4] Chandler'},
-  {id:5,  slug:'brainburg',    label:'[5] Brainburg'},
-  {id:6,  slug:'saintrose',    label:'[6] SaintRose'},
-  {id:7,  slug:'mesa',         label:'[7] Mesa'},
-  {id:8,  slug:'red-rock',     label:'[8] Red Rock'},
-  {id:9,  slug:'yuma',         label:'[9] Yuma'},
-  {id:10, slug:'surprise',     label:'[10] Surprise'},
-  {id:11, slug:'prescott',     label:'[11] Prescott'},
-  {id:12, slug:'glendale',     label:'[12] Glendale'},
-  {id:13, slug:'kingman',      label:'[13] Kingman'},
-  {id:14, slug:'winslow',      label:'[14] Winslow'},
-  {id:15, slug:'payson',       label:'[15] Payson'},
-  {id:16, slug:'gilbert',      label:'[16] Gilbert'},
-  {id:17, slug:'show-low',     label:'[17] Show Low'},
-  {id:18, slug:'casa-grande',  label:'[18] Casa Grande'},
-  {id:19, slug:'page',         label:'[19] Page'},
-  {id:20, slug:'sun-city',     label:'[20] Sun City'},
-  {id:21, slug:'queen-creek',  label:'[21] Queen Creek'},
-  {id:22, slug:'sedona',       label:'[22] Sedona'},
-  {id:23, slug:'holiday',      label:'[23] Holiday'},
-  {id:24, slug:'wednesday',    label:'[24] Wednesday'},
-  {id:25, slug:'yava',         label:'[25] Yava'},
-  {id:26, slug:'faraway',      label:'[26] Faraway'},
-  {id:27, slug:'bumble-bee',   label:'[27] Bumble Bee'},
-  {id:28, slug:'christmas',    label:'[28] Christmas'},
-  {id:29, slug:'mirage',       label:'[29] Mirage'},
-  {id:30, slug:'love',         label:'[30] Love'},
-  {id:31, slug:'drake',        label:'[31] Drake'},
-  {id:32, slug:'space',        label:'[32] Space'},
+  {id:0,  slug:'vc',          label:'[0] Vice City'},
+  {id:1,  slug:'phoenix',     label:'[1] Phoenix'},
+  {id:2,  slug:'tucson',      label:'[2] Tucson'},
+  {id:3,  slug:'scottdale',   label:'[3] Scottdale'},
+  {id:4,  slug:'chandler',    label:'[4] Chandler'},
+  {id:5,  slug:'brainburg',   label:'[5] Brainburg'},
+  {id:6,  slug:'saintrose',   label:'[6] SaintRose'},
+  {id:7,  slug:'mesa',        label:'[7] Mesa'},
+  {id:8,  slug:'red-rock',    label:'[8] Red Rock'},
+  {id:9,  slug:'yuma',        label:'[9] Yuma'},
+  {id:10, slug:'surprise',    label:'[10] Surprise'},
+  {id:11, slug:'prescott',    label:'[11] Prescott'},
+  {id:12, slug:'glendale',    label:'[12] Glendale'},
+  {id:13, slug:'kingman',     label:'[13] Kingman'},
+  {id:14, slug:'winslow',     label:'[14] Winslow'},
+  {id:15, slug:'payson',      label:'[15] Payson'},
+  {id:16, slug:'gilbert',     label:'[16] Gilbert'},
+  {id:17, slug:'show-low',    label:'[17] Show Low'},
+  {id:18, slug:'casa-grande', label:'[18] Casa Grande'},
+  {id:19, slug:'page',        label:'[19] Page'},
+  {id:20, slug:'sun-city',    label:'[20] Sun City'},
+  {id:21, slug:'queen-creek', label:'[21] Queen Creek'},
+  {id:22, slug:'sedona',      label:'[22] Sedona'},
+  {id:23, slug:'holiday',     label:'[23] Holiday'},
+  {id:24, slug:'wednesday',   label:'[24] Wednesday'},
+  {id:25, slug:'yava',        label:'[25] Yava'},
+  {id:26, slug:'faraway',     label:'[26] Faraway'},
+  {id:27, slug:'bumble-bee',  label:'[27] Bumble Bee'},
+  {id:28, slug:'christmas',   label:'[28] Christmas'},
+  {id:29, slug:'mirage',      label:'[29] Mirage'},
+  {id:30, slug:'love',        label:'[30] Love'},
+  {id:31, slug:'drake',       label:'[31] Drake'},
+  {id:32, slug:'space',       label:'[32] Space'},
 ];
 
-// ── STATE ──────────────────────────────────
-const S={
-  srvId:21, lavkas:[], itemsData:{}, avgPrices:{}, avgPricesNorm:{},
-  mode:'lavkas', sortIdx:0
-};
+const S={srvId:21,lavkas:[],itemsData:{},avgPrices:{},avgPricesNorm:{},mode:'lavkas',sortIdx:0,searchType:'item'};
 const SORTS=[
-  {k:'default',   l:'По умолчанию'},
-  {k:'sell-desc', l:'Продаёт ↓'},
-  {k:'sell-asc',  l:'Продаёт ↑'},
-  {k:'buy-desc',  l:'Покупает ↓'},
-  {k:'buy-asc',   l:'Покупает ↑'},
+  {k:'default',  l:'По умолч.'},
+  {k:'sell-desc',l:'Продаёт ↓'},
+  {k:'sell-asc', l:'Продаёт ↑'},
+  {k:'buy-desc', l:'Покупает ↓'},
+  {k:'buy-asc',  l:'Покупает ↑'},
 ];
+
+// ── CHART STATE (inline chart hover) ──────
+let chartData={prices:[],dates:[],vols:[],pad:{},W:0,H:0,mn:0,mx:0};
 
 // ── INIT ───────────────────────────────────
 document.addEventListener('DOMContentLoaded',()=>{
-  buildChips();
-  loadData();
+  // fix 5: clear search on load
   const inp=document.getElementById('search');
+  inp.value='';
+  buildChips();
+  buildSortBtns();
+  loadData();
   inp.addEventListener('input',()=>{
     const q=inp.value.trim();
     if(q.length>1){ setMode('search'); doSearch(q); }
     else setMode('lavkas');
   });
 });
+
+// fix 4: logo resets home
+function resetHome(e){
+  e.preventDefault();
+  const inp=document.getElementById('search');
+  inp.value='';
+  S.sortIdx=0;
+  S.searchType='item';
+  setSearchType('item');
+  updateSortBtns();
+  setMode('lavkas');
+  renderLavkas();
+}
 
 // ── CHIPS ──────────────────────────────────
 function buildChips(){
@@ -491,21 +537,37 @@ function buildChips(){
   });
 }
 function toggleSrvDropdown(){
-  const dd=document.getElementById('srv-dropdown');
-  const btn=document.getElementById('srv-current-btn');
-  const arrow=document.getElementById('srv-arrow');
+  const dd=document.getElementById('srv-dropdown'),btn=document.getElementById('srv-current-btn'),arrow=document.getElementById('srv-arrow');
   const open=dd.classList.toggle('open');
   btn.classList.toggle('open',open);
-  arrow.style.transform=open?'rotate(180deg)':'rotate(0deg)';
+  arrow.style.transform=open?'rotate(180deg)':'';
 }
 function closeSrvDropdown(){
   document.getElementById('srv-dropdown').classList.remove('open');
   document.getElementById('srv-current-btn').classList.remove('open');
-  document.getElementById('srv-arrow').style.transform='rotate(0deg)';
+  document.getElementById('srv-arrow').style.transform='';
 }
-document.addEventListener('click',e=>{
-  if(!e.target.closest('.server-bar')) closeSrvDropdown();
-});
+document.addEventListener('click',e=>{ if(!e.target.closest('.control-bar')) closeSrvDropdown(); });
+
+// ── SORT BUTTONS (fix 7: all visible) ──────
+function buildSortBtns(){
+  const wrap=document.getElementById('sort-btns');
+  SORTS.forEach((s,i)=>{
+    const btn=document.createElement('button');
+    btn.className='sort-btn'+(i===0?' active':'');
+    btn.textContent=s.l;
+    btn.dataset.idx=i;
+    btn.onclick=()=>{ S.sortIdx=i; updateSortBtns(); applySort(); };
+    wrap.appendChild(btn);
+  });
+}
+function updateSortBtns(){
+  document.querySelectorAll('.sort-btn').forEach(b=>b.classList.toggle('active',+b.dataset.idx===S.sortIdx));
+}
+function applySort(){
+  if(S.mode==='lavkas') renderLavkas();
+  else doSearch(document.getElementById('search').value.trim());
+}
 
 // ── LOAD ───────────────────────────────────
 async function loadData(){
@@ -522,56 +584,38 @@ async function loadData(){
     loadAvg(srv?.slug);
     updStats(srv);
     renderLavkas();
-    // Fix 4: if search is active, re-run search with new server data
     const curQ=document.getElementById('search').value.trim();
     if(S.mode==='search'&&curQ.length>1) doSearch(curQ);
     setStatus('ok',`${srv?.label||S.srvId} · ${S.lavkas.length} лавок`);
   }catch(e){
     setStatus('error','Ошибка: '+e.message);
-    document.getElementById('lavka-grid').innerHTML=`<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-text">Ошибка загрузки</div><div style="font-size:12px;margin-top:6px;color:var(--text-muted)">${e.message}</div></div>`;
+    document.getElementById('lavka-grid').innerHTML=`<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-text">Ошибка загрузки</div></div>`;
   }
 }
 
 async function loadAvg(slug){
-  if(!slug)return;
-  const url=`${WORKER}/api/avg?server=${slug}&type=sell`;
+  if(!slug) return;
   try{
-    const r=await ft(url,8000);
+    const r=await ft(`${WORKER}/api/avg?server=${slug}&type=sell`,8000);
     if(r.ok){
       S.avgPrices=await r.json();
-      // Build normalised lookup: lower+trim → original key
       S.avgPricesNorm={};
-      Object.keys(S.avgPrices).forEach(k=>{
-        S.avgPricesNorm[k.toLowerCase().trim()]=k;
-      });
+      Object.keys(S.avgPrices).forEach(k=>{ S.avgPricesNorm[k.toLowerCase().trim()]=k; });
     }
-  }catch(e){ console.warn('loadAvg error',e); }
+  }catch(e){ console.warn('loadAvg',e); }
 }
 
-// Lookup avg price data by item name (fuzzy: exact → lower → partial)
-function getAvgData(itemName){
+function getAvgData(name){
   if(!S.avgPrices) return null;
-  // 1. Exact match
-  if(S.avgPrices[itemName]) return S.avgPrices[itemName];
-  // 2. Lowercase match
-  const norm=itemName.toLowerCase().trim();
+  if(S.avgPrices[name]) return S.avgPrices[name];
+  const norm=name.toLowerCase().trim();
   const key=S.avgPricesNorm?.[norm];
   if(key) return S.avgPrices[key];
-  // 3. Partial: find first key that includes query or vice versa
-  const found=Object.keys(S.avgPrices).find(k=>
-    k.toLowerCase().includes(norm)||norm.includes(k.toLowerCase())
-  );
+  const found=Object.keys(S.avgPrices).find(k=>k.toLowerCase().includes(norm)||norm.includes(k.toLowerCase()));
   return found?S.avgPrices[found]:null;
 }
 
-function ft(url,ms){
-  return Promise.race([fetch(url),new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),ms))]);
-}
-async function cp1251(res){
-  const buf=await res.arrayBuffer();
-  try{ return JSON.parse(new TextDecoder('windows-1251').decode(buf)); }
-  catch(e){ return JSON.parse(new TextDecoder('utf-8').decode(buf)); }
-}
+function ft(url,ms){ return Promise.race([fetch(url),new Promise((_,r)=>setTimeout(()=>r(new Error('timeout')),ms))]); }
 
 // ── STATS ──────────────────────────────────
 function updStats(srv){
@@ -591,16 +635,8 @@ function setMode(m){
   document.getElementById('tab-search').classList.toggle('active',m==='search');
   document.getElementById('lavka-grid').style.display=m==='lavkas'?'':'none';
   const sv=document.getElementById('search-view');
+  sv.style.display=m==='search'?'flex':'none';
   sv.classList.toggle('visible',m==='search');
-  if(m==='search') sv.style.display='flex'; else sv.style.display='none';
-}
-
-// ── SORT ───────────────────────────────────
-function cycleSort(){
-  S.sortIdx=(S.sortIdx+1)%SORTS.length;
-  document.getElementById('sort-label').textContent=SORTS[S.sortIdx].l;
-  if(S.mode==='lavkas') renderLavkas();
-  else doSearch(document.getElementById('search').value.trim());
 }
 
 // ── RENDER LAVKAS ──────────────────────────
@@ -612,39 +648,34 @@ function renderLavkas(){
   if(k==='sell-desc') lv.sort((a,b)=>(b.items_sell?.length||0)-(a.items_sell?.length||0));
   if(k==='buy-asc')   lv.sort((a,b)=>(a.items_buy?.length||0)-(b.items_buy?.length||0));
   if(k==='buy-desc')  lv.sort((a,b)=>(b.items_buy?.length||0)-(a.items_buy?.length||0));
-
-  if(!lv.length){ grid.innerHTML=`<div class="empty"><div class="empty-icon">🏪</div><div class="empty-text">Нет лавок на этом сервере</div></div>`; return; }
+  if(!lv.length){ grid.innerHTML=`<div class="empty"><div class="empty-icon">🏪</div><div class="empty-text">Нет лавок</div></div>`; return; }
   grid.innerHTML='';
   lv.forEach((lk,i)=>{
-    const si=(lk.items_sell||[]),bi=(lk.items_buy||[]);
-    const prev=[...si.slice(0,3),...bi.slice(0,1)].map(id=>{
-      const n=typeof id==='string'?parseInt(id):id;
-      return S.itemsData[n]||null;
-    }).filter(Boolean);
+    const si=lk.items_sell||[],bi=lk.items_buy||[];
+    const prev=[...si.slice(0,3),...bi.slice(0,1)].map(id=>S.itemsData[typeof id==='string'?parseInt(id):id]||null).filter(Boolean);
     const srvL=SERVERS.find(s=>s.id===lk.serverId)?.label||`srv${lk.serverId}`;
     const card=document.createElement('div');
-    card.className='lavka-card';
-    card.style.animationDelay=Math.min(i*.025,.4)+'s';
+    card.className='lavka-card'; card.style.animationDelay=Math.min(i*.025,.4)+'s';
+    // fix 6: owner in own div with overflow
     card.innerHTML=`
       <div class="lc-header">
-        <div><div class="lc-owner">${esc(lk.username||'—')}</div><div class="lc-uid">Лавка #${lk.LavkaUid}</div></div>
+        <div class="lc-owner-wrap"><div class="lc-owner">${esc(lk.username||'—')}</div><div class="lc-uid">Лавка #${lk.LavkaUid}</div></div>
         <div class="lc-srv-badge">${esc(srvL)}</div>
       </div>
       <div class="lc-counts">
         <div class="lc-count-box sell"><div class="lc-count-label">Продаёт</div><div class="lc-count-val">${si.length}</div></div>
         <div class="lc-count-box buy"><div class="lc-count-label">Покупает</div><div class="lc-count-val">${bi.length}</div></div>
       </div>
-      ${prev.length?`<div class="lc-items-preview">${prev.map(n=>`<span class="item-tag">${esc(n)}</span>`).join('')}${(si.length+bi.length)>4?`<span class="item-tag">+${si.length+bi.length-4}</span>`:''}</div>`:''}
-    `;
+      ${prev.length?`<div class="lc-items-preview">${prev.map(n=>`<span class="item-tag">${esc(n)}</span>`).join('')}${(si.length+bi.length)>4?`<span class="item-tag">+${si.length+bi.length-4}</span>`:''}</div>`:''}`;
     card.onclick=()=>openModal(lk);
     grid.appendChild(card);
   });
 }
 
-// ── MODAL ──────────────────────────────────
+// ── LAVKA MODAL ────────────────────────────
 function openModal(lk){
   const si=lk.items_sell||[],sp=lk.price_sell||[],sc=lk.count_sell||[];
-  const bi=lk.items_buy||[], bp=lk.price_buy||[], bc=lk.count_buy||[];
+  const bi=lk.items_buy||[],bp=lk.price_buy||[],bc=lk.count_buy||[];
   const cur=lk.serverId===0?'VC$':'SA$';
   const rows=(items,prices,counts,type)=>items.map((id,i)=>{
     const n=typeof id==='string'?parseInt(id):id;
@@ -661,20 +692,18 @@ function openModal(lk){
     <div class="modal-title">Лавка #${lk.LavkaUid}</div>
     <div class="modal-sub">Владелец: ${esc(lk.username||'—')} · ${esc(srvL)}</div>
     <div class="modal-cols">
-      <div><div class="modal-col-title sell">Продаёт · ${si.length}</div>${rows(si,sp,sc,'sell')||'<div style="color:var(--text-muted);font-size:12px;padding:8px">Пусто</div>'}</div>
-      <div><div class="modal-col-title buy">Покупает · ${bi.length}</div>${rows(bi,bp,bc,'buy')||'<div style="color:var(--text-muted);font-size:12px;padding:8px">Пусто</div>'}</div>
+      <div><div class="modal-col-title sell">Продаёт · ${si.length}</div>${rows(si,sp,sc,'sell')||noItems}</div>
+      <div><div class="modal-col-title buy">Покупает · ${bi.length}</div>${rows(bi,bp,bc,'buy')||noItems}</div>
     </div>`;
   document.getElementById('modal-overlay').classList.add('open');
 }
+const noItems=`<div style="color:var(--text-muted);font-size:12px;padding:8px">Пусто</div>`;
 function closeModal(e){
-  if(!e||e.target===document.getElementById('modal-overlay')||e.currentTarget?.className==='modal-close')
+  if(!e||e.target===document.getElementById('modal-overlay')||e.currentTarget?.className?.includes('modal-close'))
     document.getElementById('modal-overlay').classList.remove('open');
 }
-document.addEventListener('keydown',e=>{ if(e.key==='Escape') document.getElementById('modal-overlay').classList.remove('open'); });
 
 // ── SEARCH TYPE ────────────────────────────
-S.searchType='item'; // 'item' | 'owner'
-
 function setSearchType(t){
   S.searchType=t;
   document.getElementById('stt-item').classList.toggle('active',t==='item');
@@ -689,15 +718,13 @@ function setSearchType(t){
 function doSearch(q){
   if(!q){ setMode('lavkas'); return; }
   setMode('search');
-  if(S.searchType==='owner') doSearchOwner(q);
-  else doSearchItem(q);
+  S.searchType==='owner'?doSearchOwner(q):doSearchItem(q);
 }
 
 function doSearchItem(q){
   const ql=q.toLowerCase();
   const matchIds=new Set();
   Object.entries(S.itemsData).forEach(([id,name])=>{ if(name&&name.toLowerCase().includes(ql)) matchIds.add(parseInt(id)); });
-
   const sell=[],buy=[];
   S.lavkas.forEach(lk=>{
     (lk.items_sell||[]).forEach((id,i)=>{
@@ -709,52 +736,41 @@ function doSearchItem(q){
       if(matchIds.has(n)) buy.push({name:S.itemsData[n]||`#${n}`,price:lk.price_buy[i]||0,count:lk.count_buy[i]||0,uid:lk.LavkaUid,owner:lk.username,srvId:lk.serverId,lk});
     });
   });
-
   const k=SORTS[S.sortIdx].k;
-  const sortFn = k.includes('desc')?(a,b)=>b.price-a.price:k.includes('asc')?(a,b)=>a.price-b.price:null;
-  if(sortFn){ sell.sort(sortFn); buy.sort(sortFn); }
-
-  // Show item search cols, hide owner col
+  const sf=k.includes('desc')?(a,b)=>b.price-a.price:k.includes('asc')?(a,b)=>a.price-b.price:null;
+  if(sf){ sell.sort(sf); buy.sort(sf); }
   document.getElementById('sell-col-title').textContent=`ПРОДАЮТ · ${sell.length}`;
   document.getElementById('buy-col-title').textContent=`ПОКУПАЮТ · ${buy.length}`;
   document.getElementById('sell-col-title').style.display='';
   document.getElementById('buy-col-title').style.display='';
   document.getElementById('sell-results').innerHTML=sell.length?sell.map((it,i)=>resHTML(it,'sell',i)).join(''):`<div style="color:var(--text-muted);font-size:12px;padding:12px 4px">Не найдено</div>`;
   document.getElementById('buy-results').innerHTML=buy.length?buy.map((it,i)=>resHTML(it,'buy',i)).join(''):`<div style="color:var(--text-muted);font-size:12px;padding:12px 4px">Не найдено</div>`;
-
-  // Chart for first matched item
   const firstName=matchIds.size>0?S.itemsData[[...matchIds][0]]:null;
   if(firstName) drawChart(firstName); else document.getElementById('chart-panel').style.display='none';
 }
 
 function doSearchOwner(q){
   const ql=q.toLowerCase();
-  // Find matching lavkas
   const matched=S.lavkas.filter(lk=>(lk.username||'').toLowerCase().includes(ql));
-
   document.getElementById('chart-panel').style.display='none';
-  // Use sell column full-width for owner results
   document.getElementById('sell-col-title').textContent=`ЛАВКИ · ${matched.length}`;
   document.getElementById('buy-col-title').textContent='';
   document.getElementById('buy-results').innerHTML='';
-  document.getElementById('sell-results').innerHTML=matched.length
-    ? matched.map((lk,i)=>ownerResHTML(lk,i)).join('')
-    : `<div style="color:var(--text-muted);font-size:12px;padding:12px 4px">Ник не найден</div>`;
+  document.getElementById('sell-results').innerHTML=matched.length?matched.map((lk,i)=>ownerResHTML(lk,i)).join(''):`<div style="color:var(--text-muted);font-size:12px;padding:12px 4px">Ник не найден</div>`;
 }
 
 function resHTML(it,type,idx){
   const srvL=SERVERS.find(s=>s.id===it.srvId)?.label||`srv${it.srvId}`;
   const cur=it.srvId===0?'VC$':'SA$';
-  const lavkaIdx=S.lavkas.indexOf(it.lk);
-  // Escape item name for use in onclick
-  const nameEsc=it.name.replace(/'/g,"\\'").replace(/\\/g,'\\\\');
+  const li=S.lavkas.indexOf(it.lk);
+  const ne=it.name.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
   return `<div class="search-result-item" style="animation-delay:${Math.min(idx*.02,.35)}s">
     <div class="sri-top">
-      <div class="sri-name sri-name-btn" onclick="openPriceModal('${nameEsc}')">${esc(it.name)}</div>
+      <div class="sri-name sri-name-btn" onclick="openPriceModal('${ne}')">${esc(it.name)}</div>
       <div class="sri-price ${type}">${fmt(it.price,true)} ${cur}</div>
     </div>
     <div class="sri-meta">
-      <span class="sri-tag uid" onclick="openModal(S.lavkas[${lavkaIdx}])">Лавка #${it.uid}</span>
+      <span class="sri-tag uid" onclick="openModal(S.lavkas[${li}])">Лавка #${it.uid}</span>
       <span class="sri-tag">${esc(it.owner||'—')}</span>
       <span class="sri-tag">${it.count} шт</span>
       <span class="sri-tag">${esc(srvL)}</span>
@@ -764,20 +780,18 @@ function resHTML(it,type,idx){
 
 function ownerResHTML(lk,idx){
   const srvL=SERVERS.find(s=>s.id===lk.serverId)?.label||`srv${lk.serverId}`;
-  return `<div class="owner-result-item" style="animation-delay:${Math.min(idx*.02,.35)}s" onclick="openModal(S.lavkas[${S.lavkas.indexOf(lk)}])">
-    <div class="ori-top">
-      <div class="ori-name">${esc(lk.username||'—')}</div>
-      <div class="ori-uid">Лавка #${lk.LavkaUid}</div>
-    </div>
+  const li=S.lavkas.indexOf(lk);
+  return `<div class="owner-result-item" style="animation-delay:${Math.min(idx*.02,.35)}s" onclick="openModal(S.lavkas[${li}])">
+    <div class="ori-top"><div class="ori-name">${esc(lk.username||'—')}</div><div class="ori-uid">Лавка #${lk.LavkaUid}</div></div>
     <div class="ori-counts">
-      <span class="ori-count sell">Продаёт ${(lk.items_sell||[]).length} тов.</span>
-      <span class="ori-count buy">Покупает ${(lk.items_buy||[]).length} тов.</span>
-      <span class="sri-tag" style="font-family:'JetBrains Mono',monospace;font-size:10px;padding:3px 8px">${esc(srvL)}</span>
+      <span class="ori-count sell">Продаёт ${(lk.items_sell||[]).length}</span>
+      <span class="ori-count buy">Покупает ${(lk.items_buy||[]).length}</span>
+      <span class="sri-tag">${esc(srvL)}</span>
     </div>
   </div>`;
 }
 
-// ── CHART ──────────────────────────────────
+// ── INLINE CHART (fix 3: hover tooltip) ────
 function drawChart(itemName){
   const panel=document.getElementById('chart-panel');
   const data=getAvgData(itemName);
@@ -789,7 +803,6 @@ function drawChart(itemName){
   const prices=pts.map(p=>p[4]||0);
   const dates=pts.map(p=>p[0]);
   const vols=pts.map(p=>p[1]||0);
-
   const mn=Math.min(...prices), mx=Math.max(...prices);
   const tot=vols.reduce((a,b)=>a+b,0);
   document.getElementById('chart-avg').textContent=fmt(prices[prices.length-1]);
@@ -799,212 +812,239 @@ function drawChart(itemName){
 
   const canvas=document.getElementById('price-chart');
   const dpr=window.devicePixelRatio||1;
-  const W=canvas.parentElement.clientWidth-40, H=200;
+  const W=canvas.parentElement.clientWidth-40, H=180;
   canvas.width=W*dpr; canvas.height=H*dpr;
   canvas.style.width=W+'px'; canvas.style.height=H+'px';
   const ctx=canvas.getContext('2d'); ctx.scale(dpr,dpr); ctx.clearRect(0,0,W,H);
 
-  const pad={t:16,r:16,b:36,l:64};
+  const pad={t:12,r:16,b:32,l:60};
   const cW=W-pad.l-pad.r, cH=H-pad.t-pad.b;
   const rng=mx-mn||1;
   const xS=cW/(prices.length-1||1);
-  const tx=i=>pad.l+i*xS;
-  const ty=v=>pad.t+cH-((v-mn)/rng)*cH;
+  const txf=i=>pad.l+i*xS;
+  const tyf=v=>pad.t+cH-((v-mn)/rng)*cH;
 
-  // Grid
+  // Store for hover
+  chartData={prices,dates,vols,pad,W,H,mn,mx,xS,txf,tyf};
+
   ctx.strokeStyle='rgba(255,255,255,.05)'; ctx.lineWidth=1;
   for(let g=0;g<=4;g++){
     const y=pad.t+(cH/4)*g;
     ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(pad.l+cW,y); ctx.stroke();
-    ctx.fillStyle='rgba(232,234,246,.25)'; ctx.font=`10px 'JetBrains Mono',monospace`; ctx.textAlign='right';
+    ctx.fillStyle='rgba(232,234,246,.22)'; ctx.font=`10px 'JetBrains Mono',monospace`; ctx.textAlign='right';
     ctx.fillText(fmtN(mx-(rng/4)*g),pad.l-6,y+4);
   }
-
-  // Area fill
   const grad=ctx.createLinearGradient(0,pad.t,0,pad.t+cH);
-  grad.addColorStop(0,'rgba(79,142,247,.3)'); grad.addColorStop(1,'rgba(79,142,247,0)');
-  ctx.beginPath(); ctx.moveTo(tx(0),ty(prices[0]));
-  prices.forEach((p,i)=>{ if(i>0) ctx.lineTo(tx(i),ty(p)); });
-  ctx.lineTo(tx(prices.length-1),pad.t+cH); ctx.lineTo(tx(0),pad.t+cH);
+  grad.addColorStop(0,'rgba(79,142,247,.28)'); grad.addColorStop(1,'rgba(79,142,247,0)');
+  ctx.beginPath(); ctx.moveTo(txf(0),tyf(prices[0]));
+  prices.forEach((p,i)=>{ if(i>0) ctx.lineTo(txf(i),tyf(p)); });
+  ctx.lineTo(txf(prices.length-1),pad.t+cH); ctx.lineTo(txf(0),pad.t+cH);
   ctx.closePath(); ctx.fillStyle=grad; ctx.fill();
-
-  // Line
   ctx.beginPath(); ctx.strokeStyle='#4f8ef7'; ctx.lineWidth=2.5; ctx.lineJoin='round';
-  prices.forEach((p,i)=>{ i===0?ctx.moveTo(tx(i),ty(p)):ctx.lineTo(tx(i),ty(p)); });
+  prices.forEach((p,i)=>{ i===0?ctx.moveTo(txf(i),tyf(p)):ctx.lineTo(txf(i),tyf(p)); });
   ctx.stroke();
-
-  // Dots
   [[0,'#4f8ef7'],[prices.length-1,'#a259f7']].forEach(([i,col])=>{
-    ctx.beginPath(); ctx.arc(tx(i),ty(prices[i]),4.5,0,Math.PI*2);
-    ctx.fillStyle=col; ctx.fill();
-    ctx.beginPath(); ctx.arc(tx(i),ty(prices[i]),2,0,Math.PI*2);
-    ctx.fillStyle='#fff'; ctx.fill();
+    ctx.beginPath(); ctx.arc(txf(i),tyf(prices[i]),4,0,Math.PI*2); ctx.fillStyle=col; ctx.fill();
+    ctx.beginPath(); ctx.arc(txf(i),tyf(prices[i]),1.8,0,Math.PI*2); ctx.fillStyle='#fff'; ctx.fill();
   });
-
-  // Date labels
-  ctx.fillStyle='rgba(232,234,246,.3)'; ctx.font=`9px 'JetBrains Mono',monospace`; ctx.textAlign='center';
+  ctx.fillStyle='rgba(232,234,246,.28)'; ctx.font=`9px 'JetBrains Mono',monospace`; ctx.textAlign='center';
   const step=Math.max(1,Math.floor(prices.length/5));
-  dates.forEach((d,i)=>{ if(i%step===0||i===dates.length-1) ctx.fillText(d.slice(5),tx(i),H-pad.b+16); });
+  dates.forEach((d,i)=>{ if(i%step===0||i===dates.length-1) ctx.fillText(d.slice(5),txf(i),H-pad.b+14); });
 }
 
-// ── PRICE MODAL ────────────────────────────
+// fix 3: inline chart hover
+(function setupInlineChartHover(){
+  document.addEventListener('DOMContentLoaded',()=>{
+    const canvas=document.getElementById('price-chart');
+    const tooltip=document.getElementById('chart-tooltip');
+    canvas.addEventListener('mousemove',e=>{
+      if(!chartData.prices?.length){ tooltip.style.display='none'; return; }
+      const rect=canvas.getBoundingClientRect();
+      const mx=(e.clientX-rect.left)*(canvas.width/dpr()/rect.width);
+      const {prices,dates,vols,pad,W,xS}=chartData;
+      const idx=Math.round((mx-pad.l)/xS);
+      if(idx<0||idx>=prices.length){ tooltip.style.display='none'; return; }
+      const px=chartData.txf(idx), py=chartData.tyf(prices[idx]);
+      // Position tooltip
+      const relX=(e.clientX-rect.left), relY=(e.clientY-rect.top);
+      const tipX=relX+16, tipY=relY-40;
+      tooltip.style.left=Math.min(tipX,rect.width-160)+'px';
+      tooltip.style.top=Math.max(0,tipY)+'px';
+      tooltip.style.display='block';
+      document.getElementById('ct-price').textContent=fmt(prices[idx],true)+' SA$';
+      document.getElementById('ct-date').textContent=dates[idx]||'';
+    });
+    canvas.addEventListener('mouseleave',()=>{ tooltip.style.display='none'; });
+  });
+  function dpr(){ return window.devicePixelRatio||1; }
+})();
+
+// ── PRICE MODAL (fix 1+2: 14 days, redesigned) ──
 function openPriceModal(itemName){
   const overlay=document.getElementById('price-modal-overlay');
   const noData=document.getElementById('pm-no-data');
   const canvas=document.getElementById('pm-canvas');
   document.getElementById('pm-title').textContent=itemName;
+  const srv=SERVERS.find(s=>s.id===S.srvId);
+  document.getElementById('pm-sub').textContent=`Средняя цена продажи · ${srv?.label||''}`;
   overlay.classList.add('open');
 
   const data=getAvgData(itemName);
   if(!data||!data.list?.length){
-    noData.style.display='block';
-    canvas.style.display='none';
-    document.getElementById('pm-avg').textContent='—';
-    document.getElementById('pm-min').textContent='—';
-    document.getElementById('pm-max').textContent='—';
-    document.getElementById('pm-vol').textContent='—';
+    noData.style.display='block'; canvas.style.display='none';
+    ['pm-avg','pm-min','pm-max','pm-vol'].forEach(id=>document.getElementById(id).textContent='—');
+    document.getElementById('pm-change').textContent='';
     return;
   }
-  noData.style.display='none';
-  canvas.style.display='block';
+  noData.style.display='none'; canvas.style.display='block';
 
-  // last 7 days
-  const pts=data.list.slice(0,7).reverse();
+  // fix 1: 14 days
+  const pts=data.list.slice(0,14).reverse();
   const prices=pts.map(p=>p[4]||0);
   const dates=pts.map(p=>p[0]);
   const vols=pts.map(p=>p[1]||0);
   const mn=Math.min(...prices), mx=Math.max(...prices);
   const tot=vols.reduce((a,b)=>a+b,0);
+  const last=prices[prices.length-1], first=prices[0];
+  const changePct=first>0?((last-first)/first*100):0;
+  const trend=last>first?1:last<first?-1:0;
+  const glowRgb=trend>0?'74,222,128':trend<0?'248,113,113':'79,142,247';
+  const glowHex=trend>0?'#4ade80':trend<0?'#f87171':'#4f8ef7';
 
-  document.getElementById('pm-avg').textContent=fmt(prices[prices.length-1],true);
+  document.getElementById('pm-avg').textContent=fmt(last,true);
   document.getElementById('pm-min').textContent=fmt(mn,true);
   document.getElementById('pm-max').textContent=fmt(mx,true);
   document.getElementById('pm-vol').textContent=fmtN(tot);
+  const chEl=document.getElementById('pm-change');
+  chEl.textContent=(changePct>=0?'+':'')+changePct.toFixed(1)+'% за 14д';
+  chEl.style.color=glowHex;
 
-  // Dynamic glow color based on trend
-  const trend=prices[prices.length-1]-prices[0];
-  const glowColor=trend>0?'79,222,128':trend<0?'248,113,113':'79,142,247';
-  document.getElementById('pm-glow').style.background=
-    `linear-gradient(135deg,rgba(${glowColor},.18),rgba(162,89,247,.1),transparent 60%)`;
-  document.getElementById('price-modal').style.boxShadow=
-    `0 0 100px rgba(${glowColor},.18),0 0 40px rgba(${glowColor},.1),0 30px 80px rgba(0,0,0,.7)`;
-  document.getElementById('price-modal').style.borderColor=`rgba(${glowColor},.3)`;
+  // Apply glow theme
+  document.getElementById('pm-glow-bar').style.background=`linear-gradient(90deg,transparent,${glowHex},rgba(162,89,247,.8),transparent)`;
+  document.getElementById('pm-ambient').style.background=`radial-gradient(ellipse at top,rgba(${glowRgb},.12) 0%,transparent 70%)`;
+  document.getElementById('price-modal').style.cssText+=`;--glow-rgb:${glowRgb};--glow-color:${glowHex}`;
+  document.getElementById('pm-badge').style.cssText=`color:${glowHex};background:rgba(${glowRgb},.12);border-color:rgba(${glowRgb},.3)`;
 
-  // Draw canvas
-  requestAnimationFrame(()=>drawPriceModalChart(canvas, prices, dates, mn, mx, glowColor));
+  // Setup tooltip
+  setupPmTooltip(canvas, prices, dates, vols, mn, mx, glowRgb, glowHex);
+
+  requestAnimationFrame(()=>drawPriceModal(canvas, prices, dates, mn, mx, glowRgb, glowHex));
 }
 
-function drawPriceModalChart(canvas, prices, dates, mn, mx, glowColor){
+let pmTooltipHandler=null, pmLeaveHandler=null;
+function setupPmTooltip(canvas, prices, dates, vols, mn, mx, glowRgb, glowHex){
+  const tt=document.getElementById('pm-tooltip');
+  tt.style.setProperty('--glow-rgb',glowRgb);
+  if(pmTooltipHandler) canvas.removeEventListener('mousemove',pmTooltipHandler);
+  if(pmLeaveHandler)   canvas.removeEventListener('mouseleave',pmLeaveHandler);
+
   const dpr=window.devicePixelRatio||1;
-  const W=canvas.parentElement.clientWidth-56, H=240;
+  pmTooltipHandler=e=>{
+    const rect=canvas.getBoundingClientRect();
+    const cx=(e.clientX-rect.left)*(canvas.width/dpr/rect.width);
+    const pad={l:72,r:24};
+    const cW=canvas.width/dpr-pad.l-pad.r;
+    const n=prices.length, xS=n>1?cW/(n-1):cW;
+    const idx=Math.max(0,Math.min(n-1,Math.round((cx-pad.l)/xS)));
+    const relX=e.clientX-rect.left, relY=e.clientY-rect.top;
+    const tipLeft=relX+18, tipTop=relY-70;
+    tt.style.left=Math.min(tipLeft,rect.width-180)+'px';
+    tt.style.top=Math.max(4,tipTop)+'px';
+    tt.style.display='block';
+    tt.style.borderColor=`rgba(${glowRgb},.4)`;
+    document.getElementById('pm-tp-price').style.color=glowHex;
+    document.getElementById('pm-tp-price').textContent=fmt(prices[idx],true)+' SA$';
+    document.getElementById('pm-tp-date').textContent=dates[idx]||'';
+    document.getElementById('pm-tp-vol').textContent=vols[idx]?`Объём: ${fmtN(vols[idx])} шт`:'';
+  };
+  pmLeaveHandler=()=>{ tt.style.display='none'; };
+  canvas.addEventListener('mousemove',pmTooltipHandler);
+  canvas.addEventListener('mouseleave',pmLeaveHandler);
+}
+
+function drawPriceModal(canvas, prices, dates, mn, mx, glowRgb, glowHex){
+  const dpr=window.devicePixelRatio||1;
+  const W=canvas.parentElement.clientWidth-32, H=260;
   canvas.width=W*dpr; canvas.height=H*dpr;
   canvas.style.width=W+'px'; canvas.style.height=H+'px';
-  const ctx=canvas.getContext('2d');
-  ctx.scale(dpr,dpr);
-  ctx.clearRect(0,0,W,H);
+  const ctx=canvas.getContext('2d'); ctx.scale(dpr,dpr); ctx.clearRect(0,0,W,H);
 
-  const pad={t:20,r:20,b:44,l:72};
+  const pad={t:20,r:24,b:44,l:72};
   const cW=W-pad.l-pad.r, cH=H-pad.t-pad.b;
-  const rng=mx-mn||1;
-  const n=prices.length;
+  const rng=mx-mn||1, n=prices.length;
   const xS=n>1?cW/(n-1):cW;
-  const tx=i=>pad.l+(n>1?i*xS:cW/2);
-  const ty=v=>pad.t+cH-((v-mn)/rng)*cH;
+  const txf=i=>pad.l+(n>1?i*xS:cW/2);
+  const tyf=v=>pad.t+cH-((v-mn)/rng)*cH;
 
-  // Subtle grid
+  // Grid
   ctx.strokeStyle='rgba(255,255,255,.04)'; ctx.lineWidth=1;
   for(let g=0;g<=4;g++){
     const y=pad.t+(cH/4)*g;
     ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(pad.l+cW,y); ctx.stroke();
-    ctx.fillStyle='rgba(232,234,246,.22)';
-    ctx.font=`10px 'JetBrains Mono',monospace`; ctx.textAlign='right';
-    ctx.fillText(fmtN(mx-(rng/4)*g), pad.l-8, y+4);
+    ctx.fillStyle='rgba(232,234,246,.2)'; ctx.font=`10px 'JetBrains Mono',monospace`; ctx.textAlign='right';
+    ctx.fillText(fmtN(mx-(rng/4)*g),pad.l-8,y+4);
   }
 
-  // Glow area fill — two layers for depth
-  ['rgba('+glowColor+',.18)','rgba('+glowColor+',.08)'].forEach((c,li)=>{
+  // Area — two gradient layers
+  ['.2','.08'].forEach(a=>{
     const grad=ctx.createLinearGradient(0,pad.t,0,pad.t+cH);
-    grad.addColorStop(0,c); grad.addColorStop(1,'rgba('+glowColor+',0)');
-    ctx.beginPath();
-    ctx.moveTo(tx(0),ty(prices[0]));
+    grad.addColorStop(0,`rgba(${glowRgb},${a})`); grad.addColorStop(1,`rgba(${glowRgb},0)`);
+    ctx.beginPath(); ctx.moveTo(txf(0),tyf(prices[0]));
     for(let i=1;i<n;i++){
-      // smooth curve via bezier
-      const cpx=(tx(i-1)+tx(i))/2;
-      ctx.bezierCurveTo(cpx,ty(prices[i-1]),cpx,ty(prices[i]),tx(i),ty(prices[i]));
+      const cx=(txf(i-1)+txf(i))/2;
+      ctx.bezierCurveTo(cx,tyf(prices[i-1]),cx,tyf(prices[i]),txf(i),tyf(prices[i]));
     }
-    ctx.lineTo(tx(n-1),pad.t+cH); ctx.lineTo(tx(0),pad.t+cH);
-    ctx.closePath();
-    ctx.fillStyle=grad; ctx.fill();
+    ctx.lineTo(txf(n-1),pad.t+cH); ctx.lineTo(txf(0),pad.t+cH);
+    ctx.closePath(); ctx.fillStyle=grad; ctx.fill();
   });
 
-  // Glow line shadow
-  ctx.save();
-  ctx.shadowColor=`rgba(${glowColor},.7)`;
-  ctx.shadowBlur=li=>14;
-  ctx.beginPath();
-  ctx.strokeStyle=`rgba(${glowColor},1)`; ctx.lineWidth=2.5; ctx.lineJoin='round';
-  ctx.moveTo(tx(0),ty(prices[0]));
+  // Line with glow
+  ctx.save(); ctx.shadowColor=`rgba(${glowRgb},.6)`; ctx.shadowBlur=14;
+  ctx.beginPath(); ctx.strokeStyle=glowHex; ctx.lineWidth=2.5; ctx.lineJoin='round';
+  ctx.moveTo(txf(0),tyf(prices[0]));
   for(let i=1;i<n;i++){
-    const cpx=(tx(i-1)+tx(i))/2;
-    ctx.bezierCurveTo(cpx,ty(prices[i-1]),cpx,ty(prices[i]),tx(i),ty(prices[i]));
+    const cx=(txf(i-1)+txf(i))/2;
+    ctx.bezierCurveTo(cx,tyf(prices[i-1]),cx,tyf(prices[i]),txf(i),tyf(prices[i]));
   }
-  ctx.stroke();
-  ctx.restore();
+  ctx.stroke(); ctx.restore();
 
-  // Second pass for crisp line on top
-  ctx.beginPath();
-  ctx.strokeStyle=`rgba(${glowColor},.9)`; ctx.lineWidth=2; ctx.lineJoin='round';
-  ctx.moveTo(tx(0),ty(prices[0]));
-  for(let i=1;i<n;i++){
-    const cpx=(tx(i-1)+tx(i))/2;
-    ctx.bezierCurveTo(cpx,ty(prices[i-1]),cpx,ty(prices[i]),tx(i),ty(prices[i]));
-  }
-  ctx.stroke();
-
-  // Data point dots with glow
+  // Dots
   prices.forEach((p,i)=>{
-    ctx.save();
-    ctx.shadowColor=`rgba(${glowColor},.9)`; ctx.shadowBlur=12;
-    ctx.beginPath(); ctx.arc(tx(i),ty(p),5,0,Math.PI*2);
-    ctx.fillStyle=`rgba(${glowColor},1)`; ctx.fill();
+    ctx.save(); ctx.shadowColor=`rgba(${glowRgb},.9)`; ctx.shadowBlur=10;
+    ctx.beginPath(); ctx.arc(txf(i),tyf(p),5,0,Math.PI*2); ctx.fillStyle=glowHex; ctx.fill();
     ctx.restore();
-    // White center
-    ctx.beginPath(); ctx.arc(tx(i),ty(p),2.5,0,Math.PI*2);
-    ctx.fillStyle='#fff'; ctx.fill();
+    ctx.beginPath(); ctx.arc(txf(i),tyf(p),2.5,0,Math.PI*2); ctx.fillStyle='#fff'; ctx.fill();
   });
 
-  // Date labels below
-  ctx.fillStyle='rgba(232,234,246,.35)';
-  ctx.font=`10px 'JetBrains Mono',monospace`; ctx.textAlign='center';
-  dates.forEach((d,i)=>{ ctx.fillText(d.slice(5),tx(i),H-pad.b+18); });
+  // Date labels
+  ctx.fillStyle='rgba(232,234,246,.3)'; ctx.font=`10px 'JetBrains Mono',monospace`; ctx.textAlign='center';
+  const step=Math.max(1,Math.floor(n/7));
+  dates.forEach((d,i)=>{ if(i%step===0||i===n-1) ctx.fillText(d.slice(5),txf(i),H-pad.b+18); });
 
-  // Price labels next to dots
-  ctx.fillStyle=`rgba(${glowColor},.85)`;
-  ctx.font=`bold 10px 'Syne',sans-serif`; ctx.textAlign='center';
+  // Price labels
+  ctx.fillStyle=`rgba(${glowRgb},.8)`; ctx.font=`bold 10px 'Syne',sans-serif`; ctx.textAlign='center';
   prices.forEach((p,i)=>{
-    const y=ty(p);
-    const above=y-pad.t>16;
-    ctx.fillText(fmtN(p),tx(i),above?y-10:y+18);
+    const y=tyf(p), above=y-pad.t>18;
+    ctx.fillText(fmtN(p),txf(i),above?y-11:y+18);
   });
 }
 
 function closePriceModal(e){
-  if(!e||e.target===document.getElementById('price-modal-overlay')||e.currentTarget?.className==='modal-close')
+  if(!e||e.target===document.getElementById('price-modal-overlay')||e.currentTarget?.className?.includes('pm-close'))
     document.getElementById('price-modal-overlay').classList.remove('open');
 }
 document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ closeModal(); closePriceModal(); } });
 
 // ── HELPERS ────────────────────────────────
 function fmt(n,full=false){
-  if(!n&&n!==0)return'—';
+  if(!n&&n!==0) return '—';
   if(full||n<1000000) return Math.round(n).toLocaleString('ru-RU').replace(/\u00a0/g,'.');
-  if(n>=1e9) return fmtAbbr(n/1e9)+'ккк';
-  if(n>=1e6) return fmtAbbr(n/1e6)+'кк';
-  if(n>=1e3) return fmtAbbr(n/1e3)+'к';
-  return Math.round(n).toLocaleString('ru-RU');
+  if(n>=1e9) return fmtA(n/1e9)+'ккк';
+  if(n>=1e6) return fmtA(n/1e6)+'кк';
+  return fmtA(n/1e3)+'к';
 }
-function fmtAbbr(x){ return x%1===0?x.toString():x.toFixed(x>=100?0:x>=10?1:2); }
-function fmtN(n){ if(n>=1e9)return(n/1e9).toFixed(1)+'ккк'; if(n>=1e6)return(n/1e6).toFixed(1)+'кк'; if(n>=1e3)return Math.round(n/1e3)+'к'; return Math.round(n).toString(); }
+function fmtA(x){ return x%1===0?x.toString():x.toFixed(x>=100?0:x>=10?1:2); }
+function fmtN(n){ if(n>=1e9) return(n/1e9).toFixed(1)+'ккк'; if(n>=1e6) return(n/1e6).toFixed(1)+'кк'; if(n>=1e3) return Math.round(n/1e3)+'к'; return Math.round(n).toString(); }
 function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function setStatus(t,txt){ document.getElementById('status-dot').className='status-dot '+(t==='ok'?'':t); document.getElementById('status-text').textContent=txt; }
 function showSkel(){ document.getElementById('lavka-grid').innerHTML=Array(12).fill(0).map(()=>`<div class="skeleton skel-card"></div>`).join(''); }
